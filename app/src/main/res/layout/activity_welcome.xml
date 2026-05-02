@@ -2,10 +2,89 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
-    <TextView
+    android:orientation="vertical"
+    android:background="#F5EFE7"
+    android:padding="24dp">
+
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Welcome Activity" />
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp">
+
+        <TextView
+            android:layout_width="36dp"
+            android:layout_height="36dp"
+            android:text="$"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#FFFFFF"
+            android:gravity="center"
+            android:background="@drawable/bg_logo_circle" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SubTotal"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            android:textColor="#000000"
+            android:layout_marginStart="8dp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/iv_illustration"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:src="@drawable/img_welcome"
+        android:scaleType="fitCenter"
+        android:contentDescription="Welcome illustration"
+        android:layout_marginTop="24dp"
+        android:layout_marginBottom="16dp" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Easy Sub Tracker"
+        android:textSize="26sp"
+        android:textStyle="bold"
+        android:textColor="#000000"
+        android:gravity="center" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Make your subscription experience\neven better with no minimal fee"
+        android:textSize="14sp"
+        android:textColor="#888888"
+        android:gravity="center"
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="40dp" />
+
+    <Button
+        android:id="@+id/btn_login"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Login"
+        android:textSize="16sp"
+        android:textColor="#FFFFFF"
+        android:backgroundTint="#000000" />
+
+    <com.google.android.material.button.MaterialButton
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/btn_signup"
+        android:layout_width="match_parent"
+        android:layout_height="52dp"
+        android:text="Sign Up"
+        android:textSize="16sp"
+        android:textColor="#000000"
+        android:layout_marginTop="12dp"
+        android:layout_marginBottom="24dp"
+        style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+        app:strokeColor="#000000"
+        app:strokeWidth="1.5dp" />
+
 </LinearLayout>
