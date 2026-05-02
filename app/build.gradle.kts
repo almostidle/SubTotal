@@ -3,13 +3,13 @@ plugins {
 }
 
 android {
-    namespace = "com.dushyant.subtotal"
+    namespace = "com.g05.subtotal"
     compileSdk {
         version = release(36)
     }
 
     defaultConfig {
-        applicationId = "com.dushyant.subtotal"
+        applicationId = "com.g05.subtotal"
         minSdk = 24
         targetSdk = 36
         versionCode = 1

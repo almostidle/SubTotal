@@ -1,4 +1,4 @@
-package com.dushyant.subtotal;
+package com.g05.subtotal;
 
 import org.junit.Test;
 

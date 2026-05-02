@@ -1,4 +1,4 @@
-package com.dushyant.subtotal.viewmodel;
+package com.g05.subtotal.viewmodel;
 
 import android.app.Application;
 
@@ -6,9 +6,9 @@ import androidx.annotation.NonNull;
 import androidx.lifecycle.AndroidViewModel;
 import androidx.lifecycle.LiveData;
 
-import com.dushyant.subtotal.database.AppDatabase;
-import com.dushyant.subtotal.database.SubscriptionDao;
-import com.dushyant.subtotal.model.Subscription;
+import com.g05.subtotal.database.AppDatabase;
+import com.g05.subtotal.database.SubscriptionDao;
+import com.g05.subtotal.model.Subscription;
 
 import java.util.List;
 import java.util.concurrent.ExecutorService;

@@ -1,4 +1,4 @@
-package com.dushyant.subtotal.model;
+package com.g05.subtotal.model;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;

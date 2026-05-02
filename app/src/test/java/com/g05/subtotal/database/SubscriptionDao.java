@@ -1,4 +1,4 @@
-package com.dushyant.subtotal.database;
+package com.g05.subtotal.database;
 
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
@@ -6,7 +6,7 @@ import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.Query;
 
-import com.dushyant.subtotal.model.Subscription;
+import com.g05.subtotal.model.Subscription;
 
 import java.util.List;
 

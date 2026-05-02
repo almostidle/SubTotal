@@ -1,4 +1,4 @@
-package com.dushyant.subtotal.database;
+package com.g05.subtotal.database;
 
 
 
@@ -8,7 +8,7 @@ import androidx.room.Database;
 import androidx.room.Room;
 import androidx.room.RoomDatabase;
 
-import com.dushyant.subtotal.model.Subscription;
+import com.g05.subtotal.model.Subscription;
 
 @Database(entities = {Subscription.class}, version = 1, exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {

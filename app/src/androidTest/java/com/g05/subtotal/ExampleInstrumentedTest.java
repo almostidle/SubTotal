@@ -1,4 +1,4 @@
-package com.dushyant.subtotal;
+package com.g05.subtotal;
 
 import android.content.Context;
 
