@@ -1,7 +1,8 @@
 package com.g05.subtotal.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
-import android.widget.LinearLayout;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -11,71 +12,65 @@ import com.g05.subtotal.R;
 import com.g05.subtotal.model.Subscription;
 import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.Locale;
 
 public class InsightsActivity extends AppCompatActivity {
 
     private SubscriptionViewModel viewModel;
-    private TextView tvTotalYearlyAmount, tvActiveCount;
-    private LinearLayout llCategoryBreakdown;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insights);
 
-        tvTotalYearlyAmount = findViewById(R.id.tvTotalYearlyAmount);
-        tvActiveCount = findViewById(R.id.tvActiveCount);
-        llCategoryBreakdown = findViewById(R.id.llCategoryBreakdown);
+        TextView tvTotalSpend   = findViewById(R.id.tvTotalSpend);
+        TextView tvSubCount     = findViewById(R.id.tvSubCount);
+        TextView tvEntertainment = findViewById(R.id.tvEntertainment);
+        TextView tvHealth       = findViewById(R.id.tvHealth);
+        TextView tvEducation    = findViewById(R.id.tvEducation);
 
         viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
-        viewModel.allSubscriptions.observe(this, this::updateUI);
-    }
 
-    private void updateUI(List<Subscription> subscriptions) {
-        if (subscriptions == null) return;
+        viewModel.allSubscriptions.observe(this, subs -> {
+            if (subs == null || subs.isEmpty()) {
+                tvTotalSpend.setText("$ 0");
+                tvSubCount.setText("Across 0 Active Subscriptions");
+                tvEntertainment.setText("$ 0");
+                tvHealth.setText("$ 0");
+                tvEducation.setText("$ 0");
+                return;
+            }
 
-        double totalYearly = 0;
-        int activeCount = subscriptions.size();
-        Map<String, Double> categoryTotals = new HashMap<>();
+            double total = 0, entertainment = 0, health = 0, education = 0;
 
-        for (Subscription sub : subscriptions) {
-            double yearlyPrice = sub.billingCycle.equalsIgnoreCase("Monthly") ? sub.price * 12 : sub.price;
-            totalYearly += yearlyPrice;
+            for (Subscription s : subs) {
+                double yearly = s.billingCycle != null && s.billingCycle.equals("Yearly")
+                        ? s.price : s.price * 12;
+                total += yearly;
 
-            String cat = sub.category != null ? sub.category : "Other";
-            categoryTotals.put(cat, categoryTotals.getOrDefault(cat, 0.0) + yearlyPrice);
-        }
+                String cat = s.category != null ? s.category : "";
+                switch (cat) {
+                    case "Entertainment": entertainment += yearly; break;
+                    case "Health":        health += yearly; break;
+                    case "Education":     education += yearly; break;
+                }
+            }
 
-        tvTotalYearlyAmount.setText("$ " + (int) totalYearly);
-        tvActiveCount.setText("Across " + activeCount + " Active Subscriptions");
+            tvTotalSpend.setText(String.format(Locale.getDefault(), "$ %.0f", total));
+            tvSubCount.setText("Across " + subs.size() + " Active Subscriptions");
+            tvEntertainment.setText(String.format(Locale.getDefault(), "$ %.0f", entertainment));
+            tvHealth.setText(String.format(Locale.getDefault(), "$ %.0f", health));
+            tvEducation.setText(String.format(Locale.getDefault(), "$ %.0f", education));
+        });
 
-        // Category Breakdown Rows
-        llCategoryBreakdown.removeAllViews();
-        for (Map.Entry<String, Double> entry : categoryTotals.entrySet()) {
-            addCategoryRow(entry.getKey(), entry.getValue());
-        }
-    }
+        // Bottom nav
+        ImageButton btnHome     = findViewById(R.id.btnNavHome);
+        ImageButton btnInsights = findViewById(R.id.btnNavInsights);
+        ImageButton btnTimeline = findViewById(R.id.btnNavTimeline);
 
-    private void addCategoryRow(String name, double amount) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setPadding(0, 8, 0, 8);
-        
-        TextView tvName = new TextView(this);
-        tvName.setLayoutParams(new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-        tvName.setText(name);
-        tvName.setTextColor(0xFF1A1A1A);
-        
-        TextView tvAmount = new TextView(this);
-        tvAmount.setText("$ " + (int) amount);
-        tvAmount.setTextColor(0xFF1A1A1A);
-        tvAmount.setTypeface(null, android.graphics.Typeface.BOLD);
-        
-        row.addView(tvName);
-        row.addView(tvAmount);
-        llCategoryBreakdown.addView(row);
+        btnHome.setOnClickListener(v -> startActivity(new Intent(this, HomeActivity.class)));
+        btnInsights.setOnClickListener(v -> { /* already here */ });
+        btnTimeline.setOnClickListener(v -> startActivity(new Intent(this, TimelineActivity.class)));
     }
 }

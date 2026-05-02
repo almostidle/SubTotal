@@ -1,14 +1,13 @@
 package com.g05.subtotal.activities;
 
+import android.content.Intent;
 import android.graphics.Color;
-import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -24,12 +23,10 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class TimelineActivity extends AppCompatActivity {
 
-    private SubscriptionViewModel viewModel;
     private TimelineAdapter adapter;
 
     @Override
@@ -37,99 +34,113 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
-        RecyclerView recyclerView = findViewById(R.id.rvTimeline);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
+        RecyclerView rv = findViewById(R.id.rvTimeline);
+        rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TimelineAdapter(new ArrayList<>());
-        recyclerView.setAdapter(adapter);
+        rv.setAdapter(adapter);
 
-        viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
-        viewModel.allSubscriptions.observe(this, subscriptions -> {
-            if (subscriptions != null) {
-                adapter.setList(subscriptions);
+        SubscriptionViewModel viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
+        viewModel.allSubscriptions.observe(this, subs -> {
+            if (subs == null || subs.isEmpty()) {
+                adapter.updateList(getDummyData());
+            } else {
+                adapter.updateList(subs);
             }
         });
+
+        findViewById(R.id.btnNavInsights).setOnClickListener(v ->
+                startActivity(new Intent(this, InsightsActivity.class)));
+        findViewById(R.id.btnNavTimeline).setOnClickListener(v -> { });
     }
 
-    private static class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.ViewHolder> {
+    private List<Subscription> getDummyData() {
+        List<Subscription> list = new ArrayList<>();
+        list.add(new Subscription("Netflix",    24.99, "Monthly", "Entertainment", "04/05/2026"));
+        list.add(new Subscription("Spotify",    12.99, "Monthly", "Health",        "08/05/2026"));
+        list.add(new Subscription("Youtube",    13.99, "Monthly", "Entertainment", "22/05/2026"));
+        list.add(new Subscription("Light Room", 19.99, "Monthly", "Cloud",         "30/05/2026"));
+        return list;
+    }
+
+    static class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.VH> {
+
         private List<Subscription> list;
-        private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        private final Random random = new Random();
+        private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
-        TimelineAdapter(List<Subscription> list) {
-            this.list = list;
-        }
+        TimelineAdapter(List<Subscription> list) { this.list = list; }
 
-        void setList(List<Subscription> list) {
-            this.list = list;
+        void updateList(List<Subscription> newList) {
+            this.list = newList;
             notifyDataSetChanged();
         }
 
-        @NonNull
         @Override
-        public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-            View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_timeline, parent, false);
-            return new ViewHolder(view);
+        public VH onCreateViewHolder(ViewGroup parent, int viewType) {
+            View v = LayoutInflater.from(parent.getContext())
+                    .inflate(R.layout.item_timeline, parent, false);
+            return new VH(v);
         }
 
         @Override
-        public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+        public void onBindViewHolder(VH h, int position) {
             Subscription sub = list.get(position);
-            holder.tvServiceName.setText(sub.serviceName);
-            holder.tvDate.setText(sub.nextBillDate);
-            holder.tvPrice.setText(String.format("$%.2f", sub.price));
 
-            if (sub.serviceName != null && !sub.serviceName.isEmpty()) {
-                holder.tvLogoCircle.setText(sub.serviceName.substring(0, 1).toUpperCase());
+            h.tvServiceName.setText(sub.serviceName);
+            h.tvDate.setText(sub.nextBillDate);
+            h.tvPrice.setText(String.format(Locale.getDefault(), "$ %.2f", sub.price));
+
+            String letter = sub.serviceName.length() > 0
+                    ? String.valueOf(sub.serviceName.charAt(0)).toUpperCase() : "?";
+            h.tvCircle.setText(letter);
+
+            int color;
+            switch (sub.category != null ? sub.category : "") {
+                case "Entertainment": color = Color.parseColor("#E53935"); break;
+                case "Health":        color = Color.parseColor("#43A047"); break;
+                case "Cloud":         color = Color.parseColor("#1E88E5"); break;
+                case "Education":     color = Color.parseColor("#8E24AA"); break;
+                default:              color = Color.parseColor("#757575"); break;
             }
+            h.tvCircle.getBackground().setTint(color);
 
-            int color = Color.argb(255, random.nextInt(256), random.nextInt(256), random.nextInt(256));
-            GradientDrawable shape = new GradientDrawable();
-            shape.setShape(GradientDrawable.OVAL);
-            shape.setColor(color);
-            holder.tvLogoCircle.setBackground(shape);
-
+            long daysAway = -1;
             try {
-                Date dueDate = dateFormat.parse(sub.nextBillDate);
-                Date today = new Date();
-                if (dueDate != null) {
-                    long diff = dueDate.getTime() - today.getTime();
-                    long daysAway = TimeUnit.DAYS.convert(diff, TimeUnit.MILLISECONDS);
-                    
-                    if (daysAway < 0) {
-                        holder.tvDaysAway.setText("Due " + Math.abs(daysAway) + " days ago");
-                    } else {
-                        holder.tvDaysAway.setText(daysAway + " days away");
-                    }
-
-                    if (daysAway >= 0 && daysAway <= 3) {
-                        holder.tvSoonBadge.setVisibility(View.VISIBLE);
-                    } else {
-                        holder.tvSoonBadge.setVisibility(View.GONE);
-                    }
+                Date due = sdf.parse(sub.nextBillDate);
+                if (due != null) {
+                    long diff = due.getTime() - new Date().getTime();
+                    daysAway = TimeUnit.MILLISECONDS.toDays(diff);
                 }
             } catch (ParseException e) {
-                holder.tvDaysAway.setText("");
-                holder.tvSoonBadge.setVisibility(View.GONE);
+                e.printStackTrace();
+            }
+
+            if (daysAway >= 0) {
+                if (daysAway <= 3) {
+                    h.tvDaysAway.setText("Due in " + daysAway + " days");
+                    h.tvSoon.setVisibility(View.VISIBLE);
+                } else {
+                    h.tvDaysAway.setText(String.format(Locale.getDefault(), "%02d days away", daysAway));
+                    h.tvSoon.setVisibility(View.GONE);
+                }
+            } else {
+                h.tvDaysAway.setText("");
+                h.tvSoon.setVisibility(View.GONE);
             }
         }
 
         @Override
-        public int getItemCount() {
-            return list.size();
-        }
+        public int getItemCount() { return list.size(); }
 
-        static class ViewHolder extends RecyclerView.ViewHolder {
-            TextView tvLogoCircle, tvServiceName, tvDate, tvSoonBadge, tvDaysAway, tvPrice;
-
-            ViewHolder(View itemView) {
-                super(itemView);
-                tvLogoCircle = itemView.findViewById(R.id.tvLogoCircle);
-                tvServiceName = itemView.findViewById(R.id.tvServiceName);
-                tvDate = itemView.findViewById(R.id.tvDate);
-                tvSoonBadge = itemView.findViewById(R.id.tvSoonBadge);
-                tvDaysAway = itemView.findViewById(R.id.tvDaysAway);
-                tvPrice = itemView.findViewById(R.id.tvPrice);
+        static class VH extends RecyclerView.ViewHolder {
+            TextView tvCircle, tvServiceName, tvDate, tvDaysAway, tvPrice, tvSoon;
+            VH(View v) {
+                super(v);
+                tvCircle      = v.findViewById(R.id.tvCircle);
+                tvServiceName = v.findViewById(R.id.tvServiceName);
+                tvDate        = v.findViewById(R.id.tvDate);
+                tvDaysAway    = v.findViewById(R.id.tvDaysAway);
+                tvPrice       = v.findViewById(R.id.tvPrice);
+                tvSoon        = v.findViewById(R.id.tvSoon);
             }
         }
     }
