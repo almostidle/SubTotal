@@ -1,11 +1,234 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:gravity="center"
-    android:orientation="vertical">
-    <TextView
-        android:layout_width="wrap_content"
+    android:background="#F9EFE5"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Add Subscription Activity" />
-</LinearLayout>
+        android:orientation="vertical"
+        android:paddingStart="20dp"
+        android:paddingEnd="20dp"
+        android:paddingTop="24dp"
+        android:paddingBottom="32dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Service Name"
+                android:textSize="15sp"
+                android:textColor="#1A1A1A"
+                android:layout_centerVertical="true"/>
+
+            <ImageButton
+                android:id="@+id/btnBack"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:layout_alignParentEnd="true"
+                android:layout_centerVertical="true"
+                android:background="?attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/ic_arrow_back"
+                android:contentDescription="Back"/>
+        </RelativeLayout>
+
+        <EditText
+            android:id="@+id/etServiceName"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_pill_input"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:hint="Service Name"
+            android:inputType="text"
+            android:textColor="#1A1A1A"
+            android:textColorHint="#BBBBBB"
+            android:textSize="14sp"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Price"
+            android:textSize="15sp"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="10dp"/>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginBottom="20dp">
+
+            <EditText
+                android:id="@+id/etPrice"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:background="@drawable/bg_pill_input"
+                android:paddingStart="20dp"
+                android:paddingEnd="20dp"
+                android:hint="$"
+                android:inputType="numberDecimal"
+                android:textColor="#1A1A1A"
+                android:textColorHint="#BBBBBB"
+                android:textSize="14sp"
+                android:gravity="center"/>
+        </FrameLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Billing Cycle"
+            android:textSize="15sp"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="20dp">
+
+            <Button
+                android:id="@+id/btnMonthly"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                android:text="Monthly"
+                android:textColor="#1A1A1A"
+                android:textSize="15sp"
+                android:backgroundTint="#DEDAD6"
+                android:stateListAnimator="@null"/>
+
+            <Button
+                android:id="@+id/btnYearly"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="Yearly"
+                android:textColor="#1A1A1A"
+                android:textSize="15sp"
+                android:backgroundTint="#DEDAD6"
+                android:stateListAnimator="@null"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Next Bill Date"
+            android:textSize="15sp"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="10dp"/>
+
+        <EditText
+            android:id="@+id/etNextBillDate"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:background="@drawable/bg_pill_input"
+            android:paddingStart="20dp"
+            android:paddingEnd="20dp"
+            android:hint="dd/mm/yyyy"
+            android:inputType="none"
+            android:focusable="false"
+            android:clickable="true"
+            android:textColor="#1A1A1A"
+            android:textColorHint="#BBBBBB"
+            android:textSize="14sp"
+            android:gravity="center"
+            android:layout_marginBottom="20dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Category"
+            android:textSize="15sp"
+            android:textColor="#1A1A1A"
+            android:layout_marginBottom="10dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp">
+
+            <Button
+                android:id="@+id/btnEntertainment"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                android:text="Entertainment"
+                android:textColor="#1A1A1A"
+                android:textSize="14sp"
+                android:backgroundTint="#DEDAD6"
+                android:stateListAnimator="@null"/>
+
+            <Button
+                android:id="@+id/btnHealth"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="Health"
+                android:textColor="#1A1A1A"
+                android:textSize="14sp"
+                android:backgroundTint="#DEDAD6"
+                android:stateListAnimator="@null"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="32dp">
+
+            <Button
+                android:id="@+id/btnOther"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp"
+                android:text="Other"
+                android:textColor="#1A1A1A"
+                android:textSize="14sp"
+                android:backgroundTint="#DEDAD6"
+                android:stateListAnimator="@null"/>
+
+            <Button
+                android:id="@+id/btnCloud"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="48dp"
+                android:layout_weight="1"
+                android:layout_marginStart="10dp"
+                android:text="Cloud"
+                android:textColor="#1A1A1A"
+                android:textSize="14sp"
+                android:backgroundTint="#DEDAD6"
+                android:stateListAnimator="@null"/>
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnAddSubscription"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:text="Add Subscription"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:backgroundTint="#E8866A"
+            android:stateListAnimator="@null"/>
+
+    </LinearLayout>
+</ScrollView>
