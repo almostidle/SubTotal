@@ -1,4 +1,4 @@
-package com.example.subtotal.adapters;
+package com.g05.subtotal.activities;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,8 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.subtotal.R;
-import com.example.subtotal.model.Subscription;
+import com.g05.subtotal.R;
+import com.g05.subtotal.model.Subscription;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -75,9 +75,8 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
             tvBillingCycle.setText(subscription.getBillingCycle());
             tvRenewalDate.setText("Renews: " + subscription.getRenewalDate());
 
-            // Set a colored circle/placeholder based on app name initial
-            // (icon logic can be extended later with actual logos)
-            ivAppIcon.setImageResource(R.drawable.ic_app_placeholder);
+            // Using a standard android resource if placeholder is missing
+            ivAppIcon.setImageResource(android.R.drawable.ic_menu_agenda);
 
             itemView.setOnClickListener(v -> listener.onItemClick(subscription));
         }

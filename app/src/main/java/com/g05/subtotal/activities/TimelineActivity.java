@@ -40,7 +40,7 @@ public class TimelineActivity extends AppCompatActivity {
         rv.setAdapter(adapter);
 
         SubscriptionViewModel viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
-        viewModel.allSubscriptions.observe(this, subs -> {
+        viewModel.getAllSubscriptions().observe(this, subs -> {
             if (subs == null || subs.isEmpty()) {
                 adapter.updateList(getDummyData());
             } else {
@@ -85,16 +85,18 @@ public class TimelineActivity extends AppCompatActivity {
         public void onBindViewHolder(VH h, int position) {
             Subscription sub = list.get(position);
 
-            h.tvServiceName.setText(sub.serviceName);
-            h.tvDate.setText(sub.nextBillDate);
-            h.tvPrice.setText(String.format(Locale.getDefault(), "$ %.2f", sub.price));
+            h.tvServiceName.setText(sub.getServiceName());
+            h.tvDate.setText(sub.getNextBillDate());
+            h.tvPrice.setText(String.format(Locale.getDefault(), "$ %.2f", sub.getPrice()));
 
-            String letter = sub.serviceName.length() > 0
-                    ? String.valueOf(sub.serviceName.charAt(0)).toUpperCase() : "?";
+            String serviceName = sub.getServiceName();
+            String letter = (serviceName != null && serviceName.length() > 0)
+                    ? String.valueOf(serviceName.charAt(0)).toUpperCase() : "?";
             h.tvCircle.setText(letter);
 
             int color;
-            switch (sub.category != null ? sub.category : "") {
+            String category = sub.getCategory();
+            switch (category != null ? category : "") {
                 case "Entertainment": color = Color.parseColor("#E53935"); break;
                 case "Health":        color = Color.parseColor("#43A047"); break;
                 case "Cloud":         color = Color.parseColor("#1E88E5"); break;
@@ -105,10 +107,13 @@ public class TimelineActivity extends AppCompatActivity {
 
             long daysAway = -1;
             try {
-                Date due = sdf.parse(sub.nextBillDate);
-                if (due != null) {
-                    long diff = due.getTime() - new Date().getTime();
-                    daysAway = TimeUnit.MILLISECONDS.toDays(diff);
+                String dateStr = sub.getNextBillDate();
+                if (dateStr != null) {
+                    Date due = sdf.parse(dateStr);
+                    if (due != null) {
+                        long diff = due.getTime() - new Date().getTime();
+                        daysAway = TimeUnit.MILLISECONDS.toDays(diff);
+                    }
                 }
             } catch (ParseException e) {
                 e.printStackTrace();

@@ -190,7 +190,7 @@ public class SubDetailActivity extends AppCompatActivity {
                     .setPositiveButton("Delete", (dialog, which) -> {
                         Subscription sub = new Subscription(
                                 finalName, finalPrice, finalBilling, finalCat, finalDate);
-                        sub.id = finalId;
+                        sub.setId(finalId);
                         viewModel.delete(sub);
                         Toast.makeText(this, finalName + " deleted", Toast.LENGTH_SHORT).show();
                         finish();

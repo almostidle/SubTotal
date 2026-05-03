@@ -1,4 +1,4 @@
-package com.example.subtotal.activities;
+package com.g05.subtotal.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -11,10 +11,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.subtotal.R;
-import com.example.subtotal.adapters.SubscriptionAdapter;
-import com.example.subtotal.model.Subscription;
-import com.example.subtotal.viewmodel.SubscriptionViewModel;
+import com.g05.subtotal.R;
+import com.g05.subtotal.activities.SubscriptionAdapter;
+import com.g05.subtotal.model.Subscription;
+import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 

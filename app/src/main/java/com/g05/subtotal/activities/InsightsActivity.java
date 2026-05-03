@@ -32,7 +32,7 @@ public class InsightsActivity extends AppCompatActivity {
 
         viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
 
-        viewModel.allSubscriptions.observe(this, subs -> {
+        viewModel.getAllSubscriptions().observe(this, subs -> {
             if (subs == null || subs.isEmpty()) {
                 tvTotalSpend.setText("$ 0");
                 tvSubCount.setText("Across 0 Active Subscriptions");
@@ -45,11 +45,13 @@ public class InsightsActivity extends AppCompatActivity {
             double total = 0, entertainment = 0, health = 0, education = 0;
 
             for (Subscription s : subs) {
-                double yearly = s.billingCycle != null && s.billingCycle.equals("Yearly")
-                        ? s.price : s.price * 12;
+                String billingCycle = s.getBillingCycle();
+                double price = s.getPrice();
+                double yearly = billingCycle != null && billingCycle.equals("Yearly")
+                        ? price : price * 12;
                 total += yearly;
 
-                String cat = s.category != null ? s.category : "";
+                String cat = s.getCategory() != null ? s.getCategory() : "";
                 switch (cat) {
                     case "Entertainment": entertainment += yearly; break;
                     case "Health":        health += yearly; break;
