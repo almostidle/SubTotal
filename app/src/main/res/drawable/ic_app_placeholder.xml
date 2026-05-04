@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    BUG FIX — item_subscription.xml references @drawable/ic_app_placeholder
+    as the default src for the subscription logo ImageView. This drawable did
+    not exist in the project, causing an inflate crash whenever the RecyclerView
+    tried to render a row.
+
+    This is a simple grey circle that acts as a neutral placeholder before
+    any real logo is loaded.
+-->
+<shape xmlns:android="http://schemas.android.com/apk/res/android"
+    android:shape="oval">
+    <solid android:color="#CCCCCC"/>
+</shape>

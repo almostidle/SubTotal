@@ -30,6 +30,7 @@
         <activity android:name=".activities.AddSubscriptionActivity"/>
         <activity android:name=".activities.SuccessActivity"/>
         <activity android:name=".activities.SubDetailActivity"/>
+        <activity android:name=".activities.DeleteSubActivity"/>
         <activity android:name=".activities.TimelineActivity"/>
         <activity android:name=".activities.InsightsActivity"/>
 

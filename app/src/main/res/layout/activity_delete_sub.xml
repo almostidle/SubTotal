@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F8F8F8"
+    android:gravity="center_horizontal"
+    android:paddingStart="20dp"
+    android:paddingEnd="20dp">
+
+    <!-- Push card down to roughly the same vertical position as the screenshot -->
+    <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="2"/>
+
+    <!-- Card: "Remove X? [trash] + body text" -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/bg_delete_card"
+        android:padding="20dp">
+
+        <!-- Row: "Remove Netflix?" + trash icon side by side -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="14dp">
+
+            <TextView
+                android:id="@+id/tvDeleteTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Remove subscription?"
+                android:textSize="20sp"
+                android:textStyle="bold"
+                android:textColor="#000000"
+                android:lineSpacingMultiplier="1.15"/>
+
+            <!-- Trash icon drawn as a vector inline -->
+            <ImageView
+                android:layout_width="28dp"
+                android:layout_height="28dp"
+                android:layout_marginStart="12dp"
+                android:src="@drawable/ic_delete_trash"
+                android:contentDescription="Delete"/>
+        </LinearLayout>
+
+        <!-- Body text -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="This subscription will be permanently deleted from your tracker."
+            android:textSize="14sp"
+            android:textColor="#333333"
+            android:lineSpacingMultiplier="1.3"/>
+    </LinearLayout>
+
+    <!-- Spacing between card and buttons -->
+    <View android:layout_width="match_parent" android:layout_height="24dp"/>
+
+    <!-- Yes, Remove button — salmon/pink like screenshot -->
+    <Button
+        android:id="@+id/btnConfirmDelete"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Yes, Remove"
+        android:textColor="#FFFFFF"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:backgroundTint="#E8766A"
+        android:stateListAnimator="@null"
+        android:layout_marginBottom="10dp"/>
+
+    <!-- Cancel button — white with border -->
+    <Button
+        android:id="@+id/btnCancelDelete"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="Cancel"
+        android:textColor="#000000"
+        android:textSize="15sp"
+        android:textStyle="bold"
+        android:backgroundTint="#FFFFFF"
+        android:stateListAnimator="@null"
+        android:background="@drawable/bg_cancel_button"/>
+
+    <View android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="3"/>
+
+</LinearLayout>

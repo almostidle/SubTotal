@@ -1,4 +1,4 @@
-package com.example.subtotal.activities;
+package com.g05.subtotal.activities;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,10 +10,10 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.subtotal.R;
-import com.example.subtotal.adapters.SubscriptionAdapter;
-import com.example.subtotal.model.Subscription;
-import com.example.subtotal.viewmodel.SubscriptionViewModel;
+import com.g05.subtotal.R;
+import com.g05.subtotal.adapters.SubscriptionAdapter;
+import com.g05.subtotal.model.Subscription;
+import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.SimpleDateFormat;
@@ -43,24 +43,23 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        recyclerView = findViewById(R.id.recyclerViewNotifications);
-        emptyStateLayout = findViewById(R.id.layoutEmptyNotifications);
+        recyclerView         = findViewById(R.id.recyclerViewNotifications);
+        emptyStateLayout     = findViewById(R.id.layoutEmptyNotifications);
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
     }
 
     private void setupRecyclerView() {
-        subscriptionAdapter = new SubscriptionAdapter(subscription -> {
-            Intent intent = new Intent(NotificationActivity.this, SubDetailActivity.class);
-            intent.putExtra("subscription_id", subscription.getId());
-            startActivity(intent);
-        });
+        // FIXED: SubscriptionAdapter takes no constructor args now — use setSubscriptions()
+        subscriptionAdapter = new SubscriptionAdapter();
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(subscriptionAdapter);
     }
 
     private void setupViewModel() {
         subscriptionViewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
-        subscriptionViewModel.getAllSubscriptions().observe(this, subscriptions -> {
+
+        // FIXED: observe the LiveData field directly, not a non-existent getAllSubscriptions() method
+        subscriptionViewModel.allSubscriptions.observe(this, subscriptions -> {
             List<Subscription> upcoming = filterUpcomingRenewals(subscriptions);
             subscriptionAdapter.setSubscriptions(upcoming);
             if (upcoming.isEmpty()) {
@@ -73,9 +72,7 @@ public class NotificationActivity extends AppCompatActivity {
         });
     }
 
-    /**
-     * Filter subscriptions renewing in the next 7 days
-     */
+    /** Returns subscriptions whose nextBillDate falls within the next 7 days. */
     private List<Subscription> filterUpcomingRenewals(List<Subscription> all) {
         List<Subscription> upcoming = new ArrayList<>();
         if (all == null) return upcoming;
@@ -88,7 +85,8 @@ public class NotificationActivity extends AppCompatActivity {
 
         for (Subscription s : all) {
             try {
-                Date renewalDate = sdf.parse(s.getRenewalDate());
+                // FIXED: use direct field s.nextBillDate, not s.getRenewalDate()
+                Date renewalDate = sdf.parse(s.nextBillDate);
                 if (renewalDate != null) {
                     Calendar renewalCal = Calendar.getInstance();
                     renewalCal.setTime(renewalDate);
@@ -97,7 +95,7 @@ public class NotificationActivity extends AppCompatActivity {
                     }
                 }
             } catch (Exception e) {
-                // skip malformed dates
+                // skip malformed dates silently
             }
         }
         return upcoming;

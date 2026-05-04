@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    FIXED: empty state ImageView referenced @drawable/ic_notifications_none which
+    doesn't exist in the project → inflate crash. Replaced with the built-in
+    @android:drawable/ic_menu_recent_history which is always available.
+-->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -28,7 +33,7 @@
                 android:text="Notifications"
                 android:textColor="@color/white"
                 android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -36,8 +41,7 @@
                 android:text="Renewing in the next 7 days"
                 android:textColor="#CCFFFFFF"
                 android:textSize="13sp"
-                android:layout_marginTop="4dp" />
-
+                android:layout_marginTop="4dp"/>
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
@@ -48,7 +52,6 @@
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- RecyclerView for upcoming renewals -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewNotifications"
             android:layout_width="match_parent"
@@ -56,7 +59,7 @@
             android:layout_weight="1"
             android:padding="8dp"
             android:clipToPadding="false"
-            tools:listitem="@layout/item_subscription" />
+            tools:listitem="@layout/item_subscription"/>
 
         <!-- Empty state -->
         <LinearLayout
@@ -66,15 +69,15 @@
             android:layout_weight="1"
             android:orientation="vertical"
             android:gravity="center"
-            android:visibility="gone"
-            tools:visibility="gone">
+            android:visibility="gone">
 
+            <!-- FIXED: was @drawable/ic_notifications_none (missing) -->
             <ImageView
                 android:layout_width="90dp"
                 android:layout_height="90dp"
-                android:src="@drawable/ic_notifications_none"
+                android:src="@android:drawable/ic_menu_recent_history"
                 android:alpha="0.4"
-                android:contentDescription="No notifications" />
+                android:contentDescription="No notifications"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -83,7 +86,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -91,10 +94,8 @@
                 android:text="No renewals in the next 7 days"
                 android:textSize="14sp"
                 android:textColor="@color/text_secondary"
-                android:layout_marginTop="8dp" />
-
+                android:layout_marginTop="8dp"/>
         </LinearLayout>
-
     </LinearLayout>
 
     <!-- Bottom Nav -->
@@ -107,6 +108,6 @@
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
         app:itemIconTint="@color/bottom_nav_selector"
-        app:itemTextColor="@color/bottom_nav_selector" />
+        app:itemTextColor="@color/bottom_nav_selector"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

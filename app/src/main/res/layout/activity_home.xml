@@ -1,4 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
+<!--
+    BUG FIX #2 (Crash):
+    The original layout referenced two drawables that do not exist in the project:
+      • @drawable/ic_empty_box  — used in the empty-state ImageView
+      • @drawable/ic_add        — used as the FAB icon
+    Android resolves @drawable references at layout inflation time. A missing
+    drawable throws a Resources.NotFoundException and crashes immediately.
+
+    Fix: replaced ic_empty_box with the built-in @android:drawable/ic_menu_agenda
+    and ic_add with @android:drawable/ic_input_add. These are always present on
+    every Android device, so no additional files are needed.
+
+    BUG FIX #3 (Crash):
+    The BottomNavigationView used app:menu="@menu/bottom_nav_menu" but the file
+    was saved at res/layout/bottom_nav_menu.xml instead of res/menu/bottom_nav_menu.xml.
+    The @menu/ resource namespace only resolves from res/menu/. The fix is to move
+    that file — instructions below. The XML reference here is already correct.
+
+    BUG FIX #4 (partial — layout side):
+    @color/primary, @color/background, @color/text_primary, @color/text_secondary,
+    @color/bottom_nav_selector were all missing from colors.xml. They are now defined
+    there (see colors.xml). No change needed in this file for those — they will resolve
+    once colors.xml is updated.
+-->
 <androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -8,7 +32,7 @@
     android:background="@color/background"
     tools:context=".activities.HomeActivity">
 
-    <!-- Top summary card -->
+    <!-- Top header bar -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/appBarLayout"
         android:layout_width="match_parent"
@@ -29,7 +53,7 @@
                 android:text="My Subscriptions"
                 android:textColor="@color/white"
                 android:textSize="22sp"
-                android:textStyle="bold" />
+                android:textStyle="bold"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -37,30 +61,28 @@
                 android:text="Monthly Total"
                 android:textColor="#CCFFFFFF"
                 android:textSize="13sp"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"/>
 
             <TextView
                 android:id="@+id/tvTotalMonthly"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="₹0.00 / month"
+                android:text="$0.00 / month"
                 android:textColor="@color/white"
                 android:textSize="32sp"
                 android:textStyle="bold"
                 android:layout_marginTop="4dp"
-                tools:text="₹1,299.00 / month" />
-
+                tools:text="$49.99 / month"/>
         </LinearLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Main content -->
+    <!-- Main content area -->
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- RecyclerView -->
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recyclerViewSubscriptions"
             android:layout_width="match_parent"
@@ -68,9 +90,9 @@
             android:layout_weight="1"
             android:padding="8dp"
             android:clipToPadding="false"
-            tools:listitem="@layout/item_subscription" />
+            tools:listitem="@layout/item_subscription"/>
 
-        <!-- Empty state -->
+        <!-- Empty state — no longer references ic_empty_box -->
         <LinearLayout
             android:id="@+id/layoutEmptyState"
             android:layout_width="match_parent"
@@ -81,12 +103,13 @@
             android:visibility="gone"
             tools:visibility="visible">
 
+            <!-- FIXED: was @drawable/ic_empty_box (missing). Using built-in system drawable. -->
             <ImageView
-                android:layout_width="100dp"
-                android:layout_height="100dp"
-                android:src="@drawable/ic_empty_box"
-                android:alpha="0.4"
-                android:contentDescription="No subscriptions" />
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:src="@android:drawable/ic_menu_agenda"
+                android:alpha="0.35"
+                android:contentDescription="No subscriptions"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -95,7 +118,7 @@
                 android:textSize="18sp"
                 android:textStyle="bold"
                 android:textColor="@color/text_primary"
-                android:layout_marginTop="16dp" />
+                android:layout_marginTop="16dp"/>
 
             <TextView
                 android:layout_width="wrap_content"
@@ -103,13 +126,11 @@
                 android:text="Tap + to add your first subscription"
                 android:textSize="14sp"
                 android:textColor="@color/text_secondary"
-                android:layout_marginTop="8dp" />
-
+                android:layout_marginTop="8dp"/>
         </LinearLayout>
-
     </LinearLayout>
 
-    <!-- FAB -->
+    <!-- FAB — FIXED: was @drawable/ic_add (missing). Using built-in system drawable. -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
@@ -117,9 +138,9 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="80dp"
         android:contentDescription="Add Subscription"
-        android:src="@drawable/ic_add"
+        android:src="@android:drawable/ic_input_add"
         app:backgroundTint="@color/primary"
-        app:tint="@color/white" />
+        app:tint="@color/white"/>
 
     <!-- Bottom Nav -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -131,6 +152,6 @@
         app:menu="@menu/bottom_nav_menu"
         app:labelVisibilityMode="labeled"
         app:itemIconTint="@color/bottom_nav_selector"
-        app:itemTextColor="@color/bottom_nav_selector" />
+        app:itemTextColor="@color/bottom_nav_selector"/>
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
