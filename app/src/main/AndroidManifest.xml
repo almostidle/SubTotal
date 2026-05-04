@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <uses-permission android:name="android.permission.INTERNET"/>
-
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -14,25 +12,24 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SubTotal">
 
+        <activity android:name=".activities.HomeActivity" />
+        <activity android:name=".activities.InsightsActivity" />
+        <activity android:name=".activities.TimelineActivity" />
+        <activity android:name=".activities.SignUpActivity" />
+        <activity android:name=".activities.SuccessActivity" />
+        <activity android:name=".activities.WelcomeActivity" />
+        <activity android:name=".activities.SubDetailActivity" />
+        <activity android:name=".activities.NotificationActivity" />
+        <activity android:name=".activities.AddSubscriptionActivity" />
+
         <activity
-            android:name=".activities.WelcomeActivity"
+            android:name=".activities.SignInActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity android:name=".activities.SignInActivity"/>
-        <activity android:name=".activities.SignUpActivity"/>
-        <activity android:name=".activities.HomeActivity"/>
-        <activity android:name=".activities.NotificationActivity"/>
-        <activity android:name=".activities.AddSubscriptionActivity"/>
-        <activity android:name=".activities.SuccessActivity"/>
-        <activity android:name=".activities.SubDetailActivity"/>
-        <activity android:name=".activities.DeleteSubActivity"/>
-        <activity android:name=".activities.TimelineActivity"/>
-        <activity android:name=".activities.InsightsActivity"/>
 
     </application>
 

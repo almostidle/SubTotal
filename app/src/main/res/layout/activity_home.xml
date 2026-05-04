@@ -1,157 +1,84 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!--
-    BUG FIX #2 (Crash):
-    The original layout referenced two drawables that do not exist in the project:
-      • @drawable/ic_empty_box  — used in the empty-state ImageView
-      • @drawable/ic_add        — used as the FAB icon
-    Android resolves @drawable references at layout inflation time. A missing
-    drawable throws a Resources.NotFoundException and crashes immediately.
-
-    Fix: replaced ic_empty_box with the built-in @android:drawable/ic_menu_agenda
-    and ic_add with @android:drawable/ic_input_add. These are always present on
-    every Android device, so no additional files are needed.
-
-    BUG FIX #3 (Crash):
-    The BottomNavigationView used app:menu="@menu/bottom_nav_menu" but the file
-    was saved at res/layout/bottom_nav_menu.xml instead of res/menu/bottom_nav_menu.xml.
-    The @menu/ resource namespace only resolves from res/menu/. The fix is to move
-    that file — instructions below. The XML reference here is already correct.
-
-    BUG FIX #4 (partial — layout side):
-    @color/primary, @color/background, @color/text_primary, @color/text_secondary,
-    @color/bottom_nav_selector were all missing from colors.xml. They are now defined
-    there (see colors.xml). No change needed in this file for those — they will resolve
-    once colors.xml is updated.
--->
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/background"
-    tools:context=".activities.HomeActivity">
+    android:background="#F5F0EB">
 
-    <!-- Top header bar -->
-    <com.google.android.material.appbar.AppBarLayout
-        android:id="@+id/appBarLayout"
+    <LinearLayout
+        android:id="@+id/header"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/primary"
-        android:elevation="0dp">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="24dp"
-            android:paddingBottom="28dp">
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="My Subscriptions"
-                android:textColor="@color/white"
-                android:textSize="22sp"
-                android:textStyle="bold"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Monthly Total"
-                android:textColor="#CCFFFFFF"
-                android:textSize="13sp"
-                android:layout_marginTop="16dp"/>
-
-            <TextView
-                android:id="@+id/tvTotalMonthly"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="$0.00 / month"
-                android:textColor="@color/white"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                android:layout_marginTop="4dp"
-                tools:text="$49.99 / month"/>
-        </LinearLayout>
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <!-- Main content area -->
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
         android:orientation="vertical"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        android:padding="20dp"
+        android:background="#FFFFFF"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerViewSubscriptions"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:padding="8dp"
-            android:clipToPadding="false"
-            tools:listitem="@layout/item_subscription"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="My Subscriptions"
+            android:textSize="24sp"
+            android:textStyle="bold"
+            android:textColor="#111111"/>
 
-        <!-- Empty state — no longer references ic_empty_box -->
-        <LinearLayout
-            android:id="@+id/layoutEmptyState"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:gravity="center"
-            android:visibility="gone"
-            tools:visibility="visible">
-
-            <!-- FIXED: was @drawable/ic_empty_box (missing). Using built-in system drawable. -->
-            <ImageView
-                android:layout_width="80dp"
-                android:layout_height="80dp"
-                android:src="@android:drawable/ic_menu_agenda"
-                android:alpha="0.35"
-                android:contentDescription="No subscriptions"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="No subscriptions yet"
-                android:textSize="18sp"
-                android:textStyle="bold"
-                android:textColor="@color/text_primary"
-                android:layout_marginTop="16dp"/>
-
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Tap + to add your first subscription"
-                android:textSize="14sp"
-                android:textColor="@color/text_secondary"
-                android:layout_marginTop="8dp"/>
-        </LinearLayout>
+        <TextView
+            android:id="@+id/tvTotalMonthly"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="₹0.00 / month"
+            android:textSize="16sp"
+            android:textColor="#666666"
+            android:layout_marginTop="4dp"/>
     </LinearLayout>
 
-    <!-- FAB — FIXED: was @drawable/ic_add (missing). Using built-in system drawable. -->
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/recyclerViewSubscriptions"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"/>
+
+    <LinearLayout
+        android:id="@+id/layoutEmptyState"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintTop_toBottomOf="@id/header"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="No subscriptions yet"
+            android:textSize="18sp"
+            android:textColor="#999999"/>
+    </LinearLayout>
+
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAdd"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="80dp"
-        android:contentDescription="Add Subscription"
+        android:layout_margin="16dp"
         android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="@color/primary"
-        app:tint="@color/white"/>
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:tint="#FFFFFF"
+        android:contentDescription="Add Subscription"/>
 
-    <!-- Bottom Nav -->
     <com.google.android.material.bottomnavigation.BottomNavigationView
         android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:background="@color/white"
+        android:background="#FFFFFF"
+        app:layout_constraintBottom_toBottomOf="parent"
         app:menu="@menu/bottom_nav_menu"
-        app:labelVisibilityMode="labeled"
-        app:itemIconTint="@color/bottom_nav_selector"
-        app:itemTextColor="@color/bottom_nav_selector"/>
+        app:labelVisibilityMode="labeled"/>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -2,28 +2,8 @@
 <resources>
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
-
-    <!--
-        BUG FIX #1 (Crash):
-        activity_home.xml and item_subscription.xml reference @color/primary,
-        @color/background, @color/text_primary, @color/text_secondary, and
-        @color/bottom_nav_selector — none of which existed in this file.
-        Android inflates layouts at runtime and immediately looks up every
-        @color reference. A missing color = Resources.NotFoundException = instant crash
-        before the user even sees the screen.
-    -->
-    <color name="primary">#1A1A1A</color>
-    <color name="background">#F5F5F5</color>
-    <color name="text_primary">#1A1A1A</color>
+    <color name="primary">#D9D0C7</color>
+    <color name="background">#F5F0EB</color>
+    <color name="text_primary">#111111</color>
     <color name="text_secondary">#888888</color>
-
-    <!--
-        bottom_nav_selector is referenced as a plain color in the XML
-        (app:itemIconTint / app:itemTextColor). A selector drawable would
-        normally go in res/color/, but since HomeActivity uses it as a
-        @color reference we define it here as a flat color to avoid the crash.
-        If you later want selected/unselected tinting, move it to res/color/
-        as a ColorStateList selector file.
-    -->
-    <color name="bottom_nav_selector">#1A1A1A</color>
 </resources>

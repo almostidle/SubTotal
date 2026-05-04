@@ -19,14 +19,22 @@ public class SubscriptionViewModel extends AndroidViewModel {
     private final SubscriptionDao dao;
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 
-    public final LiveData<List<Subscription>> allSubscriptions;
-    public final LiveData<Double> totalMonthlySpend;
+    private final LiveData<List<Subscription>> allSubscriptions;
+    private final LiveData<Double> totalMonthlySpend;
 
     public SubscriptionViewModel(@NonNull Application application) {
         super(application);
         dao = AppDatabase.getInstance(application).subscriptionDao();
         allSubscriptions = dao.getAllSubscriptions();
         totalMonthlySpend = dao.getTotalMonthlySpend();
+    }
+
+    public LiveData<List<Subscription>> getAllSubscriptions() {
+        return allSubscriptions;
+    }
+
+    public LiveData<Double> getTotalMonthlySpend() {
+        return totalMonthlySpend;
     }
 
     public void insert(Subscription subscription) {

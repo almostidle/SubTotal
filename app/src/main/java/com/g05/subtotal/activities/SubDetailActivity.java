@@ -1,15 +1,17 @@
 package com.g05.subtotal.activities;
 
-import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.DataSource;
@@ -19,6 +21,8 @@ import com.bumptech.glide.request.RequestListener;
 import com.bumptech.glide.request.RequestOptions;
 import com.bumptech.glide.request.target.Target;
 import com.g05.subtotal.R;
+import com.g05.subtotal.model.Subscription;
+import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 
 import java.util.HashMap;
 import java.util.Locale;
@@ -92,29 +96,34 @@ public class SubDetailActivity extends AppCompatActivity {
         put("claude",          "anthropic.com");
     }};
 
+    private SubscriptionViewModel viewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sub_detail);
 
-        final int    id           = getIntent().getIntExtra(EXTRA_ID, -1);
-        final String serviceName  = getIntent().getStringExtra(EXTRA_SERVICE_NAME);
-        final double price        = getIntent().getDoubleExtra(EXTRA_PRICE, 0.0);
-        final String billingCycle = getIntent().getStringExtra(EXTRA_BILLING_CYCLE);
-        final String category     = getIntent().getStringExtra(EXTRA_CATEGORY);
-        final String nextBillDate = getIntent().getStringExtra(EXTRA_NEXT_BILL_DATE);
+        viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
 
-        TextView  tvLogo     = findViewById(R.id.tvDetailLogo);
-        ImageView ivLogo     = findViewById(R.id.ivDetailLogo);
-        TextView  tvName     = findViewById(R.id.tvDetailServiceName);
-        TextView  tvPrice    = findViewById(R.id.tvDetailPrice);
-        TextView  tvNextBill = findViewById(R.id.tvDetailNextBill);
-        TextView  tvBilling  = findViewById(R.id.tvDetailBilling);
-        TextView  tvCategory = findViewById(R.id.tvDetailCategory);
-        TextView  tvAnnual   = findViewById(R.id.tvDetailAnnualCost);
+        int    id           = getIntent().getIntExtra(EXTRA_ID, -1);
+        String serviceName  = getIntent().getStringExtra(EXTRA_SERVICE_NAME);
+        double price        = getIntent().getDoubleExtra(EXTRA_PRICE, 0.0);
+        String billingCycle = getIntent().getStringExtra(EXTRA_BILLING_CYCLE);
+        String category     = getIntent().getStringExtra(EXTRA_CATEGORY);
+        String nextBillDate = getIntent().getStringExtra(EXTRA_NEXT_BILL_DATE);
+
+        TextView  tvLogo      = findViewById(R.id.tvDetailLogo);
+        ImageView ivLogo      = findViewById(R.id.ivDetailLogo);
+        TextView  tvName      = findViewById(R.id.tvDetailServiceName);
+        TextView  tvPrice     = findViewById(R.id.tvDetailPrice);
+        TextView  tvNextBill  = findViewById(R.id.tvDetailNextBill);
+        TextView  tvBilling   = findViewById(R.id.tvDetailBilling);
+        TextView  tvCategory  = findViewById(R.id.tvDetailCategory);
+        TextView  tvAnnual    = findViewById(R.id.tvDetailAnnualCost);
 
         if (serviceName != null) {
             tvName.setText(serviceName);
+
             String letter = serviceName.length() > 0
                     ? String.valueOf(serviceName.charAt(0)).toUpperCase() : "?";
             tvLogo.setText(letter);
@@ -124,19 +133,22 @@ public class SubDetailActivity extends AppCompatActivity {
 
             String domain = DOMAIN_MAP.get(serviceName.trim().toLowerCase());
             if (domain != null) {
+                String logoUrl = "https://logo.clearbit.com/" + domain;
                 Glide.with(this)
-                        .load("https://logo.clearbit.com/" + domain)
+                        .load(logoUrl)
                         .apply(new RequestOptions()
                                 .circleCrop()
                                 .diskCacheStrategy(DiskCacheStrategy.ALL))
                         .listener(new RequestListener<Drawable>() {
                             @Override
                             public boolean onLoadFailed(@Nullable GlideException e,
-                                                        Object model, Target<Drawable> target, boolean isFirstResource) {
+                                                        Object model, Target<Drawable> target,
+                                                        boolean isFirstResource) {
                                 tvLogo.setVisibility(View.VISIBLE);
                                 ivLogo.setVisibility(View.GONE);
                                 return false;
                             }
+
                             @Override
                             public boolean onResourceReady(Drawable resource,
                                                            Object model, Target<Drawable> target,
@@ -160,16 +172,31 @@ public class SubDetailActivity extends AppCompatActivity {
 
         findViewById(R.id.btnBack).setOnClickListener(v -> finish());
 
-        // ← KEY CHANGE: launch DeleteSubActivity instead of inline AlertDialog
+        final String finalName = serviceName;
+        final int    finalId   = id;
+        final double finalPrice = price;
+        final String finalBilling = billingCycle;
+        final String finalCat  = category;
+        final String finalDate = nextBillDate;
+
         findViewById(R.id.btnDelete).setOnClickListener(v -> {
-            Intent intent = new Intent(this, DeleteSubActivity.class);
-            intent.putExtra(EXTRA_ID,             id);
-            intent.putExtra(EXTRA_SERVICE_NAME,   serviceName);
-            intent.putExtra(EXTRA_PRICE,          price);
-            intent.putExtra(EXTRA_BILLING_CYCLE,  billingCycle);
-            intent.putExtra(EXTRA_CATEGORY,       category);
-            intent.putExtra(EXTRA_NEXT_BILL_DATE, nextBillDate);
-            startActivity(intent);
+            if (finalId == -1) {
+                Toast.makeText(this, "Cannot delete: invalid ID", Toast.LENGTH_SHORT).show();
+                return;
+            }
+            new AlertDialog.Builder(this)
+                    .setTitle("Delete Subscription")
+                    .setMessage("Remove " + finalName + "?")
+                    .setPositiveButton("Delete", (dialog, which) -> {
+                        Subscription sub = new Subscription(
+                                finalName, finalPrice, finalBilling, finalCat, finalDate);
+                        sub.setId(finalId);
+                        viewModel.delete(sub);
+                        Toast.makeText(this, finalName + " deleted", Toast.LENGTH_SHORT).show();
+                        finish();
+                    })
+                    .setNegativeButton("Cancel", null)
+                    .show();
         });
     }
 
