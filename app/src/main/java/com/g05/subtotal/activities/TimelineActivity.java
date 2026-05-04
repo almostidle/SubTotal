@@ -36,6 +36,8 @@ public class TimelineActivity extends AppCompatActivity {
         setContentView(R.layout.activity_timeline);
 
         RecyclerView rv = findViewById(R.id.rvTimeline);
+        View emptyState = findViewById(R.id.layoutEmptyState);
+
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TimelineAdapter(new ArrayList<>());
         rv.setAdapter(adapter);
@@ -43,8 +45,11 @@ public class TimelineActivity extends AppCompatActivity {
         SubscriptionViewModel viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
         viewModel.getAllSubscriptions().observe(this, subs -> {
             if (subs == null || subs.isEmpty()) {
-                adapter.updateList(getDummyData());
+                rv.setVisibility(View.GONE);
+                emptyState.setVisibility(View.VISIBLE);
             } else {
+                rv.setVisibility(View.VISIBLE);
+                emptyState.setVisibility(View.GONE);
                 adapter.updateList(subs);
             }
         });
@@ -79,15 +84,6 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
-    private List<Subscription> getDummyData() {
-        List<Subscription> list = new ArrayList<>();
-        list.add(new Subscription("Netflix",    24.99, "Monthly", "Entertainment", "04/05/2026"));
-        list.add(new Subscription("Spotify",    12.99, "Monthly", "Health",        "08/05/2026"));
-        list.add(new Subscription("Youtube",    13.99, "Monthly", "Entertainment", "22/05/2026"));
-        list.add(new Subscription("Light Room", 19.99, "Monthly", "Cloud",         "30/05/2026"));
-        return list;
-    }
-
     static class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.VH> {
 
         private List<Subscription> list;
@@ -118,7 +114,7 @@ public class TimelineActivity extends AppCompatActivity {
             String serviceName = sub.getServiceName();
             String letter = (serviceName != null && serviceName.length() > 0)
                     ? String.valueOf(serviceName.charAt(0)).toUpperCase() : "?";
-            
+
             if (h.tvLogoCircle != null) {
                 h.tvLogoCircle.setText(letter);
                 int color;

@@ -12,23 +12,30 @@ import com.g05.subtotal.model.Subscription;
 import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
-import java.util.List;
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Locale;
 
 public class InsightsActivity extends AppCompatActivity {
 
     private SubscriptionViewModel viewModel;
+    private TextView tvMoneyTip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_insights);
 
-        TextView tvTotalSpend   = findViewById(R.id.tvTotalSpend);
-        TextView tvSubCount     = findViewById(R.id.tvSubCount);
+        TextView tvTotalSpend    = findViewById(R.id.tvTotalSpend);
+        TextView tvSubCount      = findViewById(R.id.tvSubCount);
         TextView tvEntertainment = findViewById(R.id.tvEntertainment);
-        TextView tvHealth       = findViewById(R.id.tvHealth);
-        TextView tvEducation    = findViewById(R.id.tvEducation);
+        TextView tvHealth        = findViewById(R.id.tvHealth);
+        TextView tvEducation     = findViewById(R.id.tvEducation);
+        tvMoneyTip               = findViewById(R.id.tvMoneyTip);
 
         viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
 
@@ -54,8 +61,8 @@ public class InsightsActivity extends AppCompatActivity {
                 String cat = s.getCategory() != null ? s.getCategory() : "";
                 switch (cat) {
                     case "Entertainment": entertainment += yearly; break;
-                    case "Health":        health += yearly; break;
-                    case "Education":     education += yearly; break;
+                    case "Health":        health += yearly;        break;
+                    case "Education":     education += yearly;     break;
                 }
             }
 
@@ -66,7 +73,41 @@ public class InsightsActivity extends AppCompatActivity {
             tvEducation.setText(String.format(Locale.getDefault(), "₹ %.0f", education));
         });
 
+        fetchMoneyTip();
         setupBottomNav();
+    }
+
+    private void fetchMoneyTip() {
+        new Thread(() -> {
+            String tip = null;
+            try {
+                URL url = new URL("https://api.adviceslip.com/advice");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(5000);
+                conn.setReadTimeout(5000);
+                conn.setRequestProperty("Accept", "application/json");
+
+                BufferedReader reader = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) sb.append(line);
+                reader.close();
+                conn.disconnect();
+
+                JSONObject json = new JSONObject(sb.toString());
+                tip = json.getJSONObject("slip").getString("advice");
+            } catch (Exception e) {
+                // network failed — fallback below
+            }
+
+            final String finalTip = tip != null
+                    ? tip
+                    : "Switch to annual plans to save 15–20% on most subscriptions!";
+
+            runOnUiThread(() -> tvMoneyTip.setText(finalTip));
+        }).start();
     }
 
     private void setupBottomNav() {
