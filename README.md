@@ -20,12 +20,12 @@ A native Android app built with Java that helps users manage their subscriptions
 
 ## Features
 
-- 🔐 **Authentication** — Sign up / Sign in with Email and Google (Firebase Auth)
-- 🔔 **Notifications** — Bill reminders 3 days before due date
-- 📋 **Subscription Management** — Add, view, and delete subscriptions
-- 📅 **Timeline** — See all upcoming bills sorted by due date
-- 📊 **Insights** — Monthly spend totals and category breakdown
-- 💡 **Money Saving Tips** — Personalized suggestions based on your data
+-  **Authentication** — Sign up / Sign in with Email and Google (Firebase Auth)
+-  **Notifications** — Bill reminders 3 days before due date
+-  **Subscription Management** — Add, view, and delete subscriptions
+-  **Timeline** — See all upcoming bills sorted by due date
+-  **Insights** — Monthly spend totals and category breakdown
+-  **Money Saving Tips** — Personalized suggestions based on your data
 
 ---
 
