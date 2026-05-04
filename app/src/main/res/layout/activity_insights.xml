@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
@@ -14,8 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="20dp">
+            android:orientation="vertical">
 
             <!-- Title -->
             <TextView
@@ -25,19 +25,23 @@
                 android:textSize="30sp"
                 android:textStyle="bold"
                 android:textColor="#111111"
-                android:layout_marginBottom="24dp"/>
+                android:layout_marginStart="20dp"
+                android:layout_marginEnd="20dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"/>
 
             <!-- Card 1: Total Spending -->
             <androidx.cardview.widget.CardView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="20dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:strokeWidth="1dp"
-                app:strokeColor="#DDDDDD">
+                app:strokeColor="#E0E0E0">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -58,7 +62,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="$ 0"
-                        android:textSize="40sp"
+                        android:textSize="42sp"
                         android:textStyle="bold"
                         android:textColor="#111111"
                         android:layout_marginBottom="6dp"/>
@@ -75,15 +79,16 @@
 
             <!-- Card 2: Category Breakdown -->
             <androidx.cardview.widget.CardView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="8dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:strokeWidth="1dp"
-                app:strokeColor="#DDDDDD">
+                app:strokeColor="#E0E0E0">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -150,7 +155,8 @@
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="horizontal">
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
@@ -168,6 +174,51 @@
                             android:textColor="#222222"/>
                     </LinearLayout>
 
+                    <!-- Cloud row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Cloud"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#222222"/>
+                        <TextView
+                            android:id="@+id/tvCloud"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$ 0"
+                            android:textSize="15sp"
+                            android:textColor="#222222"/>
+                    </LinearLayout>
+
+                    <!-- Other row -->
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Other"
+                            android:textSize="15sp"
+                            android:textStyle="bold"
+                            android:textColor="#222222"/>
+                        <TextView
+                            android:id="@+id/tvOther"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$ 0"
+                            android:textSize="15sp"
+                            android:textColor="#222222"/>
+                    </LinearLayout>
+
                 </LinearLayout>
             </androidx.cardview.widget.CardView>
 
@@ -178,20 +229,21 @@
                 android:text="💡"
                 android:textSize="28sp"
                 android:layout_marginTop="16dp"
-                android:layout_marginBottom="0dp"
-                android:layout_marginStart="4dp"/>
+                android:layout_marginBottom="16dp"
+                android:layout_marginStart="20dp"/>
 
             <!-- Card 3: Money Saving Tip -->
             <androidx.cardview.widget.CardView
-                xmlns:app="http://schemas.android.com/apk/res-auto"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 android:layout_marginBottom="20dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
                 app:cardBackgroundColor="#FFFFFF"
                 app:strokeWidth="1dp"
-                app:strokeColor="#DDDDDD">
+                app:strokeColor="#E0E0E0">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -223,10 +275,16 @@
         </LinearLayout>
     </ScrollView>
 
+    <!-- Thin top border for bottom nav -->
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="#EEEEEE" />
+
     <!-- Bottom Nav -->
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="64dp"
         android:orientation="horizontal"
         android:background="#FFFFFF"
         android:elevation="8dp">
@@ -246,7 +304,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_sort_by_size"
+            android:src="@android:drawable/ic_menu_agenda"
             android:contentDescription="Insights"/>
 
         <ImageButton
