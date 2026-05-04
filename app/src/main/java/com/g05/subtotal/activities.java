@@ -1,6 +1,3 @@
-package com.g05.subtotal;
-
-import android.app.Activity;
-
-public class activities extends Activity {
-}
+/* 
+ * This file was removed to resolve a naming conflict with the package 'com.g05.subtotal.activities'.
+ */

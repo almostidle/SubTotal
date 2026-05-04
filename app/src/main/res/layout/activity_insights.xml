@@ -1,21 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<androidx.constraintlayout.widget.ConstraintLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
     android:background="#F5F0EB">
 
     <ScrollView
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1">
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toTopOf="@id/bottomNavigationView">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:paddingBottom="20dp">
 
             <!-- Title -->
             <TextView
@@ -39,9 +40,7 @@
                 android:layout_marginBottom="20dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:strokeWidth="1dp"
-                app:strokeColor="#E0E0E0">
+                app:cardBackgroundColor="#FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -61,7 +60,7 @@
                         android:id="@+id/tvTotalSpend"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="$ 0"
+                        android:text="₹ 0"
                         android:textSize="42sp"
                         android:textStyle="bold"
                         android:textColor="#111111"
@@ -86,9 +85,7 @@
                 android:layout_marginBottom="8dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:strokeWidth="1dp"
-                app:strokeColor="#E0E0E0">
+                app:cardBackgroundColor="#FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -123,7 +120,7 @@
                             android:id="@+id/tvEntertainment"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$ 0"
+                            android:text="₹ 0"
                             android:textSize="15sp"
                             android:textColor="#222222"/>
                     </LinearLayout>
@@ -146,7 +143,7 @@
                             android:id="@+id/tvHealth"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$ 0"
+                            android:text="₹ 0"
                             android:textSize="15sp"
                             android:textColor="#222222"/>
                     </LinearLayout>
@@ -169,52 +166,7 @@
                             android:id="@+id/tvEducation"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="$ 0"
-                            android:textSize="15sp"
-                            android:textColor="#222222"/>
-                    </LinearLayout>
-
-                    <!-- Cloud row -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal"
-                        android:layout_marginBottom="12dp">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Cloud"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="#222222"/>
-                        <TextView
-                            android:id="@+id/tvCloud"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="$ 0"
-                            android:textSize="15sp"
-                            android:textColor="#222222"/>
-                    </LinearLayout>
-
-                    <!-- Other row -->
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="horizontal">
-                        <TextView
-                            android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            android:layout_weight="1"
-                            android:text="Other"
-                            android:textSize="15sp"
-                            android:textStyle="bold"
-                            android:textColor="#222222"/>
-                        <TextView
-                            android:id="@+id/tvOther"
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="$ 0"
+                            android:text="₹ 0"
                             android:textSize="15sp"
                             android:textColor="#222222"/>
                     </LinearLayout>
@@ -241,9 +193,7 @@
                 android:layout_marginBottom="20dp"
                 app:cardCornerRadius="12dp"
                 app:cardElevation="0dp"
-                app:cardBackgroundColor="#FFFFFF"
-                app:strokeWidth="1dp"
-                app:strokeColor="#E0E0E0">
+                app:cardBackgroundColor="#FFFFFF">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -275,46 +225,14 @@
         </LinearLayout>
     </ScrollView>
 
-    <!-- Thin top border for bottom nav -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#EEEEEE" />
-
     <!-- Bottom Nav -->
-    <LinearLayout
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        android:elevation="8dp">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"/>
 
-        <ImageButton
-            android:id="@+id/btnNavHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_compass"
-            android:contentDescription="Home"/>
-
-        <ImageButton
-            android:id="@+id/btnNavInsights"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_agenda"
-            android:contentDescription="Insights"/>
-
-        <ImageButton
-            android:id="@+id/btnNavTimeline"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_today"
-            android:contentDescription="Timeline"/>
-    </LinearLayout>
-
-</LinearLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

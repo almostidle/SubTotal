@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.g05.subtotal.R;
 import com.g05.subtotal.model.Subscription;
 import com.g05.subtotal.viewmodel.SubscriptionViewModel;
+import com.google.android.material.bottomnavigation.BottomNavigationView;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -48,9 +49,34 @@ public class TimelineActivity extends AppCompatActivity {
             }
         });
 
-        findViewById(R.id.btnNavInsights).setOnClickListener(v ->
-                startActivity(new Intent(this, InsightsActivity.class)));
-        findViewById(R.id.btnNavTimeline).setOnClickListener(v -> { });
+        setupBottomNav();
+    }
+
+    private void setupBottomNav() {
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottomNavigationView);
+        bottomNavigationView.setSelectedItemId(R.id.nav_timeline);
+        bottomNavigationView.setOnItemSelectedListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.nav_timeline) {
+                return true;
+            } else if (id == R.id.nav_home) {
+                startActivity(new Intent(this, HomeActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (id == R.id.nav_notifications) {
+                startActivity(new Intent(this, NotificationActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            } else if (id == R.id.nav_insights) {
+                startActivity(new Intent(this, InsightsActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
+            }
+            return false;
+        });
     }
 
     private List<Subscription> getDummyData() {
@@ -85,25 +111,29 @@ public class TimelineActivity extends AppCompatActivity {
         public void onBindViewHolder(VH h, int position) {
             Subscription sub = list.get(position);
 
-            h.tvServiceName.setText(sub.getServiceName());
-            h.tvDate.setText(sub.getNextBillDate());
-            h.tvPrice.setText(String.format(Locale.getDefault(), "$ %.2f", sub.getPrice()));
+            if (h.tvServiceName != null) h.tvServiceName.setText(sub.getServiceName());
+            if (h.tvDate != null) h.tvDate.setText(sub.getNextBillDate());
+            if (h.tvPrice != null) h.tvPrice.setText(String.format(Locale.getDefault(), "₹ %.2f", sub.getPrice()));
 
             String serviceName = sub.getServiceName();
             String letter = (serviceName != null && serviceName.length() > 0)
                     ? String.valueOf(serviceName.charAt(0)).toUpperCase() : "?";
-            h.tvCircle.setText(letter);
-
-            int color;
-            String category = sub.getCategory();
-            switch (category != null ? category : "") {
-                case "Entertainment": color = Color.parseColor("#E53935"); break;
-                case "Health":        color = Color.parseColor("#43A047"); break;
-                case "Cloud":         color = Color.parseColor("#1E88E5"); break;
-                case "Education":     color = Color.parseColor("#8E24AA"); break;
-                default:              color = Color.parseColor("#757575"); break;
+            
+            if (h.tvLogoCircle != null) {
+                h.tvLogoCircle.setText(letter);
+                int color;
+                String category = sub.getCategory();
+                switch (category != null ? category : "") {
+                    case "Entertainment": color = Color.parseColor("#E53935"); break;
+                    case "Health":        color = Color.parseColor("#43A047"); break;
+                    case "Cloud":         color = Color.parseColor("#1E88E5"); break;
+                    case "Education":     color = Color.parseColor("#8E24AA"); break;
+                    default:              color = Color.parseColor("#757575"); break;
+                }
+                if (h.tvLogoCircle.getBackground() != null) {
+                    h.tvLogoCircle.getBackground().setTint(color);
+                }
             }
-            h.tvCircle.getBackground().setTint(color);
 
             long daysAway = -1;
             try {
@@ -119,17 +149,19 @@ public class TimelineActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            if (daysAway >= 0) {
-                if (daysAway <= 3) {
-                    h.tvDaysAway.setText("Due in " + daysAway + " days");
-                    h.tvSoon.setVisibility(View.VISIBLE);
+            if (h.tvDaysAway != null) {
+                if (daysAway >= 0) {
+                    if (daysAway <= 3) {
+                        h.tvDaysAway.setText("Due in " + daysAway + " days");
+                        if (h.cvSoonBadge != null) h.cvSoonBadge.setVisibility(View.VISIBLE);
+                    } else {
+                        h.tvDaysAway.setText(String.format(Locale.getDefault(), "%02d days away", daysAway));
+                        if (h.cvSoonBadge != null) h.cvSoonBadge.setVisibility(View.GONE);
+                    }
                 } else {
-                    h.tvDaysAway.setText(String.format(Locale.getDefault(), "%02d days away", daysAway));
-                    h.tvSoon.setVisibility(View.GONE);
+                    h.tvDaysAway.setText("");
+                    if (h.cvSoonBadge != null) h.cvSoonBadge.setVisibility(View.GONE);
                 }
-            } else {
-                h.tvDaysAway.setText("");
-                h.tvSoon.setVisibility(View.GONE);
             }
         }
 
@@ -137,15 +169,16 @@ public class TimelineActivity extends AppCompatActivity {
         public int getItemCount() { return list.size(); }
 
         static class VH extends RecyclerView.ViewHolder {
-            TextView tvCircle, tvServiceName, tvDate, tvDaysAway, tvPrice, tvSoon;
+            TextView tvLogoCircle, tvServiceName, tvDate, tvDaysAway, tvPrice;
+            View cvSoonBadge;
             VH(View v) {
                 super(v);
-                tvCircle      = v.findViewById(R.id.tvCircle);
+                tvLogoCircle  = v.findViewById(R.id.tvLogoCircle);
                 tvServiceName = v.findViewById(R.id.tvServiceName);
                 tvDate        = v.findViewById(R.id.tvDate);
                 tvDaysAway    = v.findViewById(R.id.tvDaysAway);
                 tvPrice       = v.findViewById(R.id.tvPrice);
-                tvSoon        = v.findViewById(R.id.tvSoon);
+                cvSoonBadge   = v.findViewById(R.id.cvSoonBadge);
             }
         }
     }

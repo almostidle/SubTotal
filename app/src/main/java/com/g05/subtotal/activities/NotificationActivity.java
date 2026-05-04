@@ -111,6 +111,11 @@ public class NotificationActivity extends AppCompatActivity {
                 overridePendingTransition(0, 0);
                 finish();
                 return true;
+            } else if (id == R.id.nav_timeline) {
+                startActivity(new Intent(this, TimelineActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
             } else if (id == R.id.nav_insights) {
                 startActivity(new Intent(this, InsightsActivity.class));
                 overridePendingTransition(0, 0);

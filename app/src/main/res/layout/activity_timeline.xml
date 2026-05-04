@@ -26,46 +26,13 @@
         android:paddingTop="8dp"
         android:clipToPadding="false"/>
 
-    <!-- Thin top border for bottom nav -->
-    <View
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:background="#EEEEEE" />
-
     <!-- Bottom Nav -->
-    <LinearLayout
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNavigationView"
         android:layout_width="match_parent"
-        android:layout_height="64dp"
-        android:orientation="horizontal"
+        android:layout_height="wrap_content"
         android:background="#FFFFFF"
-        android:elevation="8dp">
-
-        <ImageButton
-            android:id="@+id/btnNavHome"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_compass"
-            android:contentDescription="Home"/>
-
-        <ImageButton
-            android:id="@+id/btnNavInsights"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_agenda"
-            android:contentDescription="Insights"/>
-
-        <ImageButton
-            android:id="@+id/btnNavTimeline"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:background="?attr/selectableItemBackgroundBorderless"
-            android:src="@android:drawable/ic_menu_today"
-            android:contentDescription="Timeline"/>
-    </LinearLayout>
+        app:menu="@menu/bottom_nav_menu"
+        app:labelVisibilityMode="labeled"/>
 
 </LinearLayout>

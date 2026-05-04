@@ -107,6 +107,11 @@ public class HomeActivity extends AppCompatActivity {
             int id = item.getItemId();
             if (id == R.id.nav_home) {
                 return true;
+            } else if (id == R.id.nav_timeline) {
+                startActivity(new Intent(this, TimelineActivity.class));
+                overridePendingTransition(0, 0);
+                finish();
+                return true;
             } else if (id == R.id.nav_notifications) {
                 startActivity(new Intent(this, NotificationActivity.class));
                 overridePendingTransition(0, 0);
