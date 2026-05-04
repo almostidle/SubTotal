@@ -23,7 +23,7 @@ public abstract class AppDatabase extends RoomDatabase {
                             context.getApplicationContext(),
                             AppDatabase.class,
                             "subtotal_db"
-                    ).build();
+                    ).fallbackToDestructiveMigration().build();
                 }
             }
         }

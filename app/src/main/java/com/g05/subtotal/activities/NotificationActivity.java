@@ -51,7 +51,12 @@ public class NotificationActivity extends AppCompatActivity {
     private void setupRecyclerView() {
         subscriptionAdapter = new SubscriptionAdapter(subscription -> {
             Intent intent = new Intent(NotificationActivity.this, SubDetailActivity.class);
-            intent.putExtra("subscription_id", subscription.getId());
+            intent.putExtra(SubDetailActivity.EXTRA_ID,             subscription.getId());
+            intent.putExtra(SubDetailActivity.EXTRA_SERVICE_NAME,   subscription.getServiceName());
+            intent.putExtra(SubDetailActivity.EXTRA_PRICE,          subscription.getPrice());
+            intent.putExtra(SubDetailActivity.EXTRA_BILLING_CYCLE,  subscription.getBillingCycle());
+            intent.putExtra(SubDetailActivity.EXTRA_CATEGORY,       subscription.getCategory());
+            intent.putExtra(SubDetailActivity.EXTRA_NEXT_BILL_DATE, subscription.getNextBillDate());
             startActivity(intent);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

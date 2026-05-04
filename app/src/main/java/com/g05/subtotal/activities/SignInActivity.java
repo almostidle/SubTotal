@@ -29,15 +29,15 @@ public class SignInActivity extends AppCompatActivity {
     private GoogleSignInClient googleSignInClient;
 
     private final ActivityResultLauncher<Intent> googleSignInLauncher =
-        registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
-            try {
-                GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(result.getData())
-                    .getResult(ApiException.class);
-                firebaseAuthWithGoogle(account.getIdToken());
-            } catch (ApiException e) {
-                Toast.makeText(this, "Google Sign-In failed", Toast.LENGTH_SHORT).show();
-            }
-        });
+            registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+                try {
+                    GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(result.getData())
+                            .getResult(ApiException.class);
+                    firebaseAuthWithGoogle(account.getIdToken());
+                } catch (ApiException e) {
+                    Toast.makeText(this, "Google Sign-In failed", Toast.LENGTH_SHORT).show();
+                }
+            });
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,9 +48,9 @@ public class SignInActivity extends AppCompatActivity {
         prefs = getSharedPreferences("subtotal_prefs", MODE_PRIVATE);
 
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(getString(R.string.default_web_client_id))
-            .requestEmail()
-            .build();
+                .requestIdToken(getString(R.string.default_web_client_id))
+                .requestEmail()
+                .build();
         googleSignInClient = GoogleSignIn.getClient(this, gso);
 
         etEmail = findViewById(R.id.et_email);
@@ -84,7 +84,9 @@ public class SignInActivity extends AppCompatActivity {
                     startActivity(new Intent(this, HomeActivity.class));
                     finish();
                 } else {
-                    Toast.makeText(this, "Sign in failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Sign in failed: " +
+                                    (task.getException() != null ? task.getException().getMessage() : "Unknown error"),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         });

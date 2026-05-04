@@ -31,7 +31,7 @@ public class SuccessActivity extends AppCompatActivity {
         if (service != null)      tvService.setText(service);
         if (billingCycle != null) {
             tvPrice.setText(String.format(Locale.getDefault(),
-                    "$%.2f/%s", price, "Monthly".equals(billingCycle) ? "mo" : "yr"));
+                    "₹%.2f/%s", price, "Monthly".equals(billingCycle) ? "mo" : "yr"));
         }
         if (category != null)     tvCategory.setText(category);
         if (nextBillDate != null) tvDate.setText(nextBillDate);

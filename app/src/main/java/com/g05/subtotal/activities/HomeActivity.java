@@ -12,7 +12,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.g05.subtotal.R;
-import com.g05.subtotal.activities.SubscriptionAdapter;
 import com.g05.subtotal.model.Subscription;
 import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -52,9 +51,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         subscriptionAdapter = new SubscriptionAdapter(subscription -> {
-            // On item click → go to SubDetailActivity
+            // FIXED: Use the correct keys defined in SubDetailActivity and pass all required data
             Intent intent = new Intent(HomeActivity.this, SubDetailActivity.class);
-            intent.putExtra("subscription_id", subscription.getId());
+            intent.putExtra(SubDetailActivity.EXTRA_ID,             subscription.getId());
+            intent.putExtra(SubDetailActivity.EXTRA_SERVICE_NAME,   subscription.getServiceName());
+            intent.putExtra(SubDetailActivity.EXTRA_PRICE,          subscription.getPrice());
+            intent.putExtra(SubDetailActivity.EXTRA_BILLING_CYCLE,  subscription.getBillingCycle());
+            intent.putExtra(SubDetailActivity.EXTRA_CATEGORY,       subscription.getCategory());
+            intent.putExtra(SubDetailActivity.EXTRA_NEXT_BILL_DATE, subscription.getNextBillDate());
             startActivity(intent);
         });
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
@@ -85,15 +89,13 @@ public class HomeActivity extends AppCompatActivity {
         if (subscriptions == null) return;
         double total = 0;
         for (Subscription s : subscriptions) {
-            // Normalize everything to monthly cost
-            double cost = s.getCost();
+            double cost = s.getPrice();
             String cycle = s.getBillingCycle();
             if (cycle != null) {
                 switch (cycle.toLowerCase()) {
                     case "yearly":  cost = cost / 12; break;
                     case "weekly":  cost = cost * 4;  break;
                     case "daily":   cost = cost * 30; break;
-                    // "monthly" is already correct
                 }
             }
             total += cost;

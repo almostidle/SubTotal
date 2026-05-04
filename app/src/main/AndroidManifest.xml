@@ -12,15 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.SubTotal">
 
-        <activity android:name=".activities.HomeActivity" />
-        <activity android:name=".activities.InsightsActivity" />
-        <activity android:name=".activities.TimelineActivity" />
-        <activity android:name=".activities.SignUpActivity" />
-        <activity android:name=".activities.SuccessActivity" />
-        <activity android:name=".activities.WelcomeActivity" />
-        <activity android:name=".activities.SubDetailActivity" />
-        <activity android:name=".activities.NotificationActivity" />
-        <activity android:name=".activities.AddSubscriptionActivity" />
+        <activity android:name=".activities.HomeActivity" android:exported="false"/>
+        <activity android:name=".activities.InsightsActivity" android:exported="false"/>
+        <activity android:name=".activities.TimelineActivity" android:exported="false"/>
+        <activity android:name=".activities.SignUpActivity" android:exported="false"/>
+        <activity android:name=".activities.SuccessActivity" android:exported="false"/>
+        <activity android:name=".activities.WelcomeActivity" android:exported="false"/>
+        <activity android:name=".activities.SubDetailActivity" android:exported="false"/>
+        <activity android:name=".activities.NotificationActivity" android:exported="false"/>
+        <activity android:name=".activities.AddSubscriptionActivity" android:exported="false"/>
+        <activity android:name=".activities.DeleteSubActivity" android:exported="false"/>
 
         <activity
             android:name=".activities.SignInActivity"

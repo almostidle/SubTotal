@@ -45,7 +45,9 @@ public class SignUpActivity extends AppCompatActivity {
                     startActivity(new Intent(this, SignInActivity.class));
                     finish();
                 } else {
-                    Toast.makeText(this, "Sign up failed: " + task.getException().getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Sign up failed: " +
+                                    (task.getException() != null ? task.getException().getMessage() : "Unknown error"),
+                            Toast.LENGTH_LONG).show();
                 }
             });
         });

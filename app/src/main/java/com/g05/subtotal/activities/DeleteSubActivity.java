@@ -10,42 +10,21 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.g05.subtotal.R;
-import com.g05.subtotal.model.Subscription;
 import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 
 /**
- * Full-screen delete confirmation screen (S10 - Delete Sub).
- *
- * Started by SubDetailActivity when the user taps "Delete".
- * Receives the same extras as SubDetailActivity so it can reconstruct
- * the Subscription object and call viewModel.delete().
- *
- * On "Yes, Remove" → deletes from DB, navigates back to HomeActivity
- *   (clearing the back stack so SubDetailActivity is also popped).
- * On "Cancel"      → just finishes, returning to SubDetailActivity.
+ * Full-screen delete confirmation screen.
  */
 public class DeleteSubActivity extends AppCompatActivity {
-
-    // Re-use the same extra keys defined in SubDetailActivity
-    public static final String EXTRA_ID             = SubDetailActivity.EXTRA_ID;
-    public static final String EXTRA_SERVICE_NAME   = SubDetailActivity.EXTRA_SERVICE_NAME;
-    public static final String EXTRA_PRICE          = SubDetailActivity.EXTRA_PRICE;
-    public static final String EXTRA_BILLING_CYCLE  = SubDetailActivity.EXTRA_BILLING_CYCLE;
-    public static final String EXTRA_CATEGORY       = SubDetailActivity.EXTRA_CATEGORY;
-    public static final String EXTRA_NEXT_BILL_DATE = SubDetailActivity.EXTRA_NEXT_BILL_DATE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_delete_sub);
 
-        // Read subscription data passed from SubDetailActivity
-        int    id           = getIntent().getIntExtra(EXTRA_ID, -1);
-        String serviceName  = getIntent().getStringExtra(EXTRA_SERVICE_NAME);
-        double price        = getIntent().getDoubleExtra(EXTRA_PRICE, 0.0);
-        String billingCycle = getIntent().getStringExtra(EXTRA_BILLING_CYCLE);
-        String category     = getIntent().getStringExtra(EXTRA_CATEGORY);
-        String nextBillDate = getIntent().getStringExtra(EXTRA_NEXT_BILL_DATE);
+        // Retrieve data passed from SubDetailActivity
+        int    id           = getIntent().getIntExtra(SubDetailActivity.EXTRA_ID, -1);
+        String serviceName  = getIntent().getStringExtra(SubDetailActivity.EXTRA_SERVICE_NAME);
 
         // Set the dynamic title: "Remove Netflix?"
         TextView tvTitle = findViewById(R.id.tvDeleteTitle);
@@ -64,24 +43,22 @@ public class DeleteSubActivity extends AppCompatActivity {
                 return;
             }
 
-            // Reconstruct the Subscription with its real DB id and delete it
-            Subscription sub = new Subscription(
-                    serviceName, price, billingCycle, category, nextBillDate);
-            sub.id = id;
-            viewModel.delete(sub);
+            // FIXED: Use deleteById for maximum reliability. 
+            // This avoids issues with object reconstruction.
+            viewModel.deleteById(id);
 
             Toast.makeText(this,
                     (serviceName != null ? serviceName : "Subscription") + " removed",
                     Toast.LENGTH_SHORT).show();
 
-            // Pop all the way back to HomeActivity
+            // Return to HomeActivity and clear stack
             Intent intent = new Intent(this, HomeActivity.class);
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
             startActivity(intent);
             finish();
         });
 
-        // Cancel — just go back to SubDetailActivity
+        // Cancel — just go back
         Button btnCancel = findViewById(R.id.btnCancelDelete);
         btnCancel.setOnClickListener(v -> finish());
     }

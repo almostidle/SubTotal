@@ -19,6 +19,9 @@ public interface SubscriptionDao {
     @Delete
     void delete(Subscription subscription);
 
+    @Query("DELETE FROM subscriptions WHERE id = :id")
+    void deleteById(int id);
+
     @Query("SELECT * FROM subscriptions ORDER BY nextBillDate ASC")
     LiveData<List<Subscription>> getAllSubscriptions();
 

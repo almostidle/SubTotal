@@ -45,7 +45,17 @@ public class SubscriptionViewModel extends AndroidViewModel {
         executor.execute(() -> dao.delete(subscription));
     }
 
+    public void deleteById(int id) {
+        executor.execute(() -> dao.deleteById(id));
+    }
+
     public LiveData<Double> getSpendByCategory(String category) {
         return dao.getSpendByCategory(category);
+    }
+
+    @Override
+    protected void onCleared() {
+        super.onCleared();
+        executor.shutdown();
     }
 }
