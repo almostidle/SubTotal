@@ -5,19 +5,18 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:background="#EEEEEE">
+    android:background="#EBEBEB">
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Timeline"
-        android:textSize="26sp"
-        android:textStyle="bold"
-        android:textColor="#111111"
-        android:layout_marginStart="20dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginBottom="8dp"/>
+    <!-- Top Illustration -->
+    <ImageView
+        android:layout_width="160dp"
+        android:layout_height="160dp"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="32dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/img_welcome" />
 
+    <!-- List of Subscriptions -->
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvTimeline"
         android:layout_width="match_parent"
@@ -26,7 +25,7 @@
         android:paddingTop="8dp"
         android:clipToPadding="false"/>
 
-    <!-- Empty State Layout -->
+    <!-- Empty State Layout (Shows when list is empty) -->
     <LinearLayout
         android:id="@+id/layoutEmptyState"
         android:layout_width="match_parent"

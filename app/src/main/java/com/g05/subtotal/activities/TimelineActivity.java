@@ -35,15 +35,20 @@ public class TimelineActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_timeline);
 
+        // Find views
         RecyclerView rv = findViewById(R.id.rvTimeline);
         View emptyState = findViewById(R.id.layoutEmptyState);
 
+        // Setup RecyclerView
         rv.setLayoutManager(new LinearLayoutManager(this));
         adapter = new TimelineAdapter(new ArrayList<>());
         rv.setAdapter(adapter);
 
+        // Setup ViewModel to observe data
         SubscriptionViewModel viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
         viewModel.getAllSubscriptions().observe(this, subs -> {
+
+            // Check if list is empty to show empty state
             if (subs == null || subs.isEmpty()) {
                 rv.setVisibility(View.GONE);
                 emptyState.setVisibility(View.VISIBLE);
@@ -84,12 +89,18 @@ public class TimelineActivity extends AppCompatActivity {
         });
     }
 
+    // Adapter class for the RecyclerView
     static class TimelineAdapter extends RecyclerView.Adapter<TimelineAdapter.VH> {
 
         private List<Subscription> list;
-        private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        // Format to read the date from the database
+        private final SimpleDateFormat dbFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
+        // Format to display the date on screen (e.g., "Feb 27")
+        private final SimpleDateFormat displayFormat = new SimpleDateFormat("MMMM d", Locale.getDefault());
 
-        TimelineAdapter(List<Subscription> list) { this.list = list; }
+        TimelineAdapter(List<Subscription> list) {
+            this.list = list;
+        }
 
         void updateList(List<Subscription> newList) {
             this.list = newList;
@@ -104,69 +115,94 @@ public class TimelineActivity extends AppCompatActivity {
         }
 
         @Override
-        public void onBindViewHolder(VH h, int position) {
+        public void onBindViewHolder(VH holder, int position) {
             Subscription sub = list.get(position);
 
-            if (h.tvServiceName != null) h.tvServiceName.setText(sub.getServiceName());
-            if (h.tvDate != null) h.tvDate.setText(sub.getNextBillDate());
-            if (h.tvPrice != null) h.tvPrice.setText(String.format(Locale.getDefault(), "₹ %.2f", sub.getPrice()));
+            // Set basic text
+            if (holder.tvServiceName != null) {
+                holder.tvServiceName.setText(sub.getServiceName());
+            }
 
+            // Format price with dollar sign
+            if (holder.tvPrice != null) {
+                holder.tvPrice.setText(String.format(Locale.getDefault(), "$ %.2f", sub.getPrice()));
+            }
+
+            // Set the logo letter
             String serviceName = sub.getServiceName();
-            String letter = (serviceName != null && serviceName.length() > 0)
-                    ? String.valueOf(serviceName.charAt(0)).toUpperCase() : "?";
+            String letter = "?";
+            if (serviceName != null && !serviceName.isEmpty()) {
+                letter = String.valueOf(serviceName.charAt(0)).toUpperCase();
+            }
 
-            if (h.tvLogoCircle != null) {
-                h.tvLogoCircle.setText(letter);
-                int color;
+            if (holder.tvLogoCircle != null) {
+                holder.tvLogoCircle.setText(letter);
+
+                // Set logo color based on category
+                int color = Color.parseColor("#757575"); // Default color
                 String category = sub.getCategory();
-                switch (category != null ? category : "") {
-                    case "Entertainment": color = Color.parseColor("#E53935"); break;
-                    case "Health":        color = Color.parseColor("#43A047"); break;
-                    case "Cloud":         color = Color.parseColor("#1E88E5"); break;
-                    case "Education":     color = Color.parseColor("#8E24AA"); break;
-                    default:              color = Color.parseColor("#757575"); break;
+                if (category != null) {
+                    if (category.equals("Entertainment")) color = Color.parseColor("#E53935");
+                    else if (category.equals("Health")) color = Color.parseColor("#43A047");
+                    else if (category.equals("Cloud")) color = Color.parseColor("#1E88E5");
+                    else if (category.equals("Education")) color = Color.parseColor("#8E24AA");
                 }
-                if (h.tvLogoCircle.getBackground() != null) {
-                    h.tvLogoCircle.getBackground().setTint(color);
+
+                if (holder.tvLogoCircle.getBackground() != null) {
+                    holder.tvLogoCircle.getBackground().setTint(color);
                 }
             }
 
+            // Calculate days away and format date
             long daysAway = -1;
             try {
                 String dateStr = sub.getNextBillDate();
                 if (dateStr != null) {
-                    Date due = sdf.parse(dateStr);
+                    Date due = dbFormat.parse(dateStr);
                     if (due != null) {
-                        long diff = due.getTime() - new Date().getTime();
-                        daysAway = TimeUnit.MILLISECONDS.toDays(diff);
+                        // Set formatted date (e.g., March 5)
+                        if (holder.tvDate != null) {
+                            holder.tvDate.setText(displayFormat.format(due));
+                        }
+
+                        // Calculate difference in days
+                        long diffInMills = due.getTime() - new Date().getTime();
+                        daysAway = TimeUnit.MILLISECONDS.toDays(diffInMills);
                     }
                 }
             } catch (ParseException e) {
-                e.printStackTrace();
+                // Fallback if parsing fails
+                if (holder.tvDate != null) {
+                    holder.tvDate.setText(sub.getNextBillDate());
+                }
             }
 
-            if (h.tvDaysAway != null) {
+            // Update UI based on days away
+            if (holder.tvDaysAway != null) {
                 if (daysAway >= 0) {
                     if (daysAway <= 3) {
-                        h.tvDaysAway.setText("Due in " + daysAway + " days");
-                        if (h.cvSoonBadge != null) h.cvSoonBadge.setVisibility(View.VISIBLE);
+                        holder.tvDaysAway.setText("Due in " + daysAway + " days");
+                        if (holder.cvSoonBadge != null) holder.cvSoonBadge.setVisibility(View.VISIBLE);
                     } else {
-                        h.tvDaysAway.setText(String.format(Locale.getDefault(), "%02d days away", daysAway));
-                        if (h.cvSoonBadge != null) h.cvSoonBadge.setVisibility(View.GONE);
+                        // e.g., "06 days away"
+                        holder.tvDaysAway.setText(String.format(Locale.getDefault(), "%02d days away", daysAway));
+                        if (holder.cvSoonBadge != null) holder.cvSoonBadge.setVisibility(View.GONE);
                     }
                 } else {
-                    h.tvDaysAway.setText("");
-                    if (h.cvSoonBadge != null) h.cvSoonBadge.setVisibility(View.GONE);
+                    holder.tvDaysAway.setText("Overdue");
+                    if (holder.cvSoonBadge != null) holder.cvSoonBadge.setVisibility(View.GONE);
                 }
             }
         }
 
         @Override
-        public int getItemCount() { return list.size(); }
+        public int getItemCount() {
+            return list.size();
+        }
 
         static class VH extends RecyclerView.ViewHolder {
-            TextView tvLogoCircle, tvServiceName, tvDate, tvDaysAway, tvPrice;
-            View cvSoonBadge;
+            TextView tvLogoCircle, tvServiceName, tvDate, tvDaysAway, tvPrice, cvSoonBadge;
+
             VH(View v) {
                 super(v);
                 tvLogoCircle  = v.findViewById(R.id.tvLogoCircle);
