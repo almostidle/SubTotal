@@ -1,20 +1,10 @@
 # SubTotal — Easy Sub Tracker
 
-## ⚠️NOTE: THIS PROJECT IS UNSTABLE AND MAY CAUSE CRASHES AND ISSUES
-
 
 
 > Never miss a bill. Track all your subscriptions in one place.
 
 A native Android app built with Java that helps users manage their subscriptions, track upcoming bills, and get insights on monthly spending.
-
----
-
-## Screenshots (yet to be updated)
-
-| Welcome | Sign In | Home | Add Subscription | Timeline | Insights |
-|---|---|---|---|---|---|
-| S1 | S3 | S6 | S7 | S11 | S12 |
 
 ---
 
