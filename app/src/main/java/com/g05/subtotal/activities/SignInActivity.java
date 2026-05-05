@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.util.Log;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -22,6 +23,7 @@ import com.g05.subtotal.R;
 
 public class SignInActivity extends AppCompatActivity {
 
+    private static final String TAG = "SignInActivity";
     private EditText etEmail, etPassword;
     private CheckBox cbRemember;
     private SharedPreferences prefs;
@@ -33,9 +35,14 @@ public class SignInActivity extends AppCompatActivity {
                 try {
                     GoogleSignInAccount account = GoogleSignIn.getSignedInAccountFromIntent(result.getData())
                             .getResult(ApiException.class);
-                    firebaseAuthWithGoogle(account.getIdToken());
+                    if (account != null) {
+                        firebaseAuthWithGoogle(account.getIdToken());
+                    }
                 } catch (ApiException e) {
-                    Toast.makeText(this, "Google Sign-In failed", Toast.LENGTH_SHORT).show();
+                    // Status code 10 often means SHA-1 is missing in Firebase Console
+                    String errorMsg = "Google Sign-In failed (Status: " + e.getStatusCode() + ")";
+                    Log.e(TAG, errorMsg, e);
+                    Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
                 }
             });
 
@@ -47,6 +54,7 @@ public class SignInActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
         prefs = getSharedPreferences("subtotal_prefs", MODE_PRIVATE);
 
+        // Configure Google Sign In
         GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
@@ -64,6 +72,7 @@ public class SignInActivity extends AppCompatActivity {
 
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
 
+        // Email/Password Login
         findViewById(R.id.btn_signin).setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             String password = etPassword.getText().toString().trim();
@@ -73,24 +82,15 @@ public class SignInActivity extends AppCompatActivity {
 
             mAuth.signInWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    SharedPreferences.Editor editor = prefs.edit();
-                    if (cbRemember.isChecked()) {
-                        editor.putBoolean("remember_me", true);
-                        editor.putString("email", email);
-                    } else {
-                        editor.clear();
-                    }
-                    editor.apply();
-                    startActivity(new Intent(this, HomeActivity.class));
-                    finish();
+                    handleLoginSuccess(email);
                 } else {
-                    Toast.makeText(this, "Sign in failed: " +
-                                    (task.getException() != null ? task.getException().getMessage() : "Unknown error"),
-                            Toast.LENGTH_LONG).show();
+                    String error = task.getException() != null ? task.getException().getMessage() : "Unknown error";
+                    Toast.makeText(this, "Sign in failed: " + error, Toast.LENGTH_LONG).show();
                 }
             });
         });
 
+        // Forgot Password
         findViewById(R.id.tv_forgot).setOnClickListener(v -> {
             String email = etEmail.getText().toString().trim();
             if (TextUtils.isEmpty(email)) {
@@ -106,10 +106,26 @@ public class SignInActivity extends AppCompatActivity {
             });
         });
 
+        // Google Sign-In Click
         findViewById(R.id.btn_google).setOnClickListener(v -> {
-            Intent signInIntent = googleSignInClient.getSignInIntent();
-            googleSignInLauncher.launch(signInIntent);
+            googleSignInClient.signOut().addOnCompleteListener(task -> {
+                Intent signInIntent = googleSignInClient.getSignInIntent();
+                googleSignInLauncher.launch(signInIntent);
+            });
         });
+    }
+
+    private void handleLoginSuccess(String email) {
+        SharedPreferences.Editor editor = prefs.edit();
+        if (cbRemember.isChecked()) {
+            editor.putBoolean("remember_me", true);
+            editor.putString("email", email);
+        } else {
+            editor.clear();
+        }
+        editor.apply();
+        startActivity(new Intent(this, HomeActivity.class));
+        finish();
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
@@ -119,7 +135,8 @@ public class SignInActivity extends AppCompatActivity {
                 startActivity(new Intent(this, HomeActivity.class));
                 finish();
             } else {
-                Toast.makeText(this, "Firebase auth failed", Toast.LENGTH_SHORT).show();
+                String error = task.getException() != null ? task.getException().getMessage() : "Unknown error";
+                Toast.makeText(this, "Firebase Google Auth failed: " + error, Toast.LENGTH_LONG).show();
             }
         });
     }
