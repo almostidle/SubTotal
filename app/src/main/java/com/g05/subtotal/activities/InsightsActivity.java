@@ -47,11 +47,11 @@ public class InsightsActivity extends AppCompatActivity {
 
             // If there's no data, reset everything to zero.
             if (subs == null || subs.isEmpty()) {
-                tvTotalSpend.setText("$ 0");
+                tvTotalSpend.setText("₹ 0");
                 tvSubCount.setText("Across 0 Active Subscriptions");
-                tvEntertainment.setText("$ 0");
-                tvHealth.setText("$ 0");
-                tvEducation.setText("$ 0");
+                tvEntertainment.setText("₹ 0");
+                tvHealth.setText("₹ 0");
+                tvEducation.setText("₹ 0");
                 return;
             }
 
@@ -79,11 +79,11 @@ public class InsightsActivity extends AppCompatActivity {
             }
 
             // Update the UI with the final calculated amounts formatted with a Dollar sign
-            tvTotalSpend.setText(String.format(Locale.getDefault(), "$ %.0f", total));
+            tvTotalSpend.setText(String.format(Locale.getDefault(), "₹ %.0f", total));
             tvSubCount.setText("Across " + subs.size() + " Active Subscriptions");
-            tvEntertainment.setText(String.format(Locale.getDefault(), "$ %.0f", entertainment));
-            tvHealth.setText(String.format(Locale.getDefault(), "$ %.0f", health));
-            tvEducation.setText(String.format(Locale.getDefault(), "$ %.0f", education));
+            tvEntertainment.setText(String.format(Locale.getDefault(), "₹ %.0f", entertainment));
+            tvHealth.setText(String.format(Locale.getDefault(), "₹ %.0f", health));
+            tvEducation.setText(String.format(Locale.getDefault(), "₹ %.0f", education));
         });
 
         // Trigger the API call to get a random tip

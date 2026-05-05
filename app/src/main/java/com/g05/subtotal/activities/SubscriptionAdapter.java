@@ -76,12 +76,12 @@ public class SubscriptionAdapter extends RecyclerView.Adapter<SubscriptionAdapte
         public void bind(Subscription subscription, OnItemClickListener listener) {
             tvAppName.setText(subscription.getServiceName());
 
-            // Cost: "$ 24.99/month"
+            // Cost: "₹ 24.99/month"
             String billingCycle = subscription.getBillingCycle() != null
                     ? subscription.getBillingCycle().toLowerCase()
                     : "monthly";
             tvCost.setText(String.format(Locale.getDefault(),
-                    "$ %.2f/%s", subscription.getPrice(), billingCycle));
+                    "₹ %.2f/%s", subscription.getPrice(), billingCycle));
 
             // Due in X days label + colored dot
             int daysUntil = getDaysUntilRenewal(subscription.getNextBillDate());
