@@ -3,6 +3,7 @@ package com.g05.subtotal.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -11,11 +12,14 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.g05.subtotal.R;
 import com.g05.subtotal.model.Subscription;
 import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -40,14 +44,20 @@ public class HomeActivity extends AppCompatActivity {
     // Shared
     private TextView tvGreeting;
     private TextView tvDate;
+    private ImageView ivAvatar;
     private BottomNavigationView bottomNavigationView;
+
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
+        mAuth = FirebaseAuth.getInstance();
+
         initViews();
+        updateUserInfo();
         setDateAndGreeting();
         setupRecyclerView();
         setupViewModel();
@@ -58,6 +68,7 @@ public class HomeActivity extends AppCompatActivity {
     private void initViews() {
         tvGreeting = findViewById(R.id.tvGreeting);
         tvDate = findViewById(R.id.tvDate);
+        ivAvatar = findViewById(R.id.ivAvatar);
 
         layoutEmptyState = findViewById(R.id.layoutEmptyState);
         fabAddEmpty = findViewById(R.id.fabAddEmpty);
@@ -70,6 +81,30 @@ public class HomeActivity extends AppCompatActivity {
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
     }
 
+    private void updateUserInfo() {
+        FirebaseUser user = mAuth.getCurrentUser();
+        if (user != null) {
+            String name = user.getDisplayName();
+            if (name == null || name.isEmpty()) {
+                name = user.getEmail();
+                if (name != null && name.contains("@")) {
+                    name = name.split("@")[0];
+                }
+            }
+            if (name != null) {
+                tvGreeting.setText("Hi, " + name);
+            }
+
+            if (user.getPhotoUrl() != null) {
+                Glide.with(this)
+                        .load(user.getPhotoUrl())
+                        .placeholder(R.drawable.ic_app_placeholder)
+                        .circleCrop()
+                        .into(ivAvatar);
+            }
+        }
+    }
+
     private void setDateAndGreeting() {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM dd", Locale.getDefault());
         tvDate.setText(sdf.format(new Date()));
@@ -77,7 +112,6 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setupRecyclerView() {
         subscriptionAdapter = new SubscriptionAdapter(subscription -> {
-            // Use the correct keys defined in SubDetailActivity
             Intent intent = new Intent(HomeActivity.this, SubDetailActivity.class);
             intent.putExtra(SubDetailActivity.EXTRA_ID,             subscription.getId());
             intent.putExtra(SubDetailActivity.EXTRA_SERVICE_NAME,   subscription.getServiceName());
@@ -106,14 +140,12 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
-    /** S5 - Home Empty */
     private void showEmptyState() {
         layoutEmptyState.setVisibility(View.VISIBLE);
         layoutFullState.setVisibility(View.GONE);
         fabAdd.setVisibility(View.GONE);
     }
 
-    /** S6 - Home Full */
     private void showFullState(List<Subscription> subscriptions) {
         layoutEmptyState.setVisibility(View.GONE);
         layoutFullState.setVisibility(View.VISIBLE);
@@ -132,7 +164,7 @@ public class HomeActivity extends AppCompatActivity {
             }
             total += cost;
         }
-        tvTotalMonthly.setText(String.format(Locale.getDefault(), "$ %.0f/month", total));
+        tvTotalMonthly.setText(String.format(Locale.getDefault(), "₹ %.0f/month", total));
     }
 
     private void setupFabs() {

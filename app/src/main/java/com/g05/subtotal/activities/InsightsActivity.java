@@ -12,8 +12,13 @@ import com.g05.subtotal.model.Subscription;
 import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONObject;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.Locale;
-import java.util.Random;
 
 public class InsightsActivity extends AppCompatActivity {
 
@@ -33,10 +38,11 @@ public class InsightsActivity extends AppCompatActivity {
         TextView tvEducation     = findViewById(R.id.tvEducation);
         tvMoneyTip               = findViewById(R.id.tvMoneyTip);
 
-        // Initialize ViewModel. This handles our database connection.
+        // Initialize ViewModel. This handles our database connection securely.
         viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
 
-        // Observe the database. Whenever a subscription changes, update the UI.
+        // Observe the database. Whenever a subscription is added or deleted,
+        // this block automatically runs and updates the UI.
         viewModel.getAllSubscriptions().observe(this, subs -> {
 
             // If there's no data, reset everything to zero.
@@ -57,8 +63,10 @@ public class InsightsActivity extends AppCompatActivity {
                 String billingCycle = s.getBillingCycle();
                 double price = s.getPrice();
 
-                // Calculate the yearly cost
+                // Calculate the yearly cost. If it's already yearly, use the price.
+                // If it's monthly, multiply by 12.
                 double yearly = billingCycle != null && billingCycle.equals("Yearly") ? price : price * 12;
+
                 total += yearly;
 
                 // Sort the spending into categories
@@ -78,28 +86,50 @@ public class InsightsActivity extends AppCompatActivity {
             tvEducation.setText(String.format(Locale.getDefault(), "$ %.0f", education));
         });
 
-        // Show a random, highly relevant money saving tip
-        setRandomMoneyTip();
+        // Trigger the API call to get a random tip
+        fetchMoneyTip();
 
         setupBottomNav();
     }
 
-    private void setRandomMoneyTip() {
-        String[] tips = {
-                "Switch to annual plans to save an average of 15-20% on most subscriptions!",
-                "Cancel subscriptions you haven't used in the last 30 days.",
-                "Share family plans for music and video streaming to split costs with friends.",
-                "Set calendar reminders 3 days before a free trial ends to avoid surprise charges.",
-                "Rotate your streaming services! Binge one app for a month, then pause it and switch to another.",
-                "Check if your student email gives you access to discounted software and streaming."
-        };
+    // Method to explain in Viva: How to safely fetch internet data
+    private void fetchMoneyTip() {
+        // We open a new Thread so the network request doesn't freeze the main User Interface
+        new Thread(() -> {
+            String tip = null;
+            try {
+                // Connect to a free advice API
+                URL url = new URL("https://api.adviceslip.com/advice");
+                HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+                conn.setRequestMethod("GET");
+                conn.setConnectTimeout(5000); // Wait max 5 seconds
+                conn.setReadTimeout(5000);
+                conn.setRequestProperty("Accept", "application/json");
 
-        // Pick a random number between 0 and the length of our list
-        Random random = new Random();
-        int randomIndex = random.nextInt(tips.length);
+                // Read the incoming data stream
+                BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+                StringBuilder sb = new StringBuilder();
+                String line;
+                while ((line = reader.readLine()) != null) sb.append(line);
+                reader.close();
+                conn.disconnect();
 
-        // Set the text on the screen
-        tvMoneyTip.setText(tips[randomIndex]);
+                // Convert the raw text into a JSON object and extract the "advice" string
+                JSONObject json = new JSONObject(sb.toString());
+                tip = json.getJSONObject("slip").getString("advice");
+            } catch (Exception e) {
+                // If the user has no internet, the exception fires and 'tip' stays null.
+            }
+
+            // Set a default tip if the API failed, otherwise use the fetched tip
+            final String finalTip = tip != null
+                    ? tip
+                    : "Switch to annual plans to save an average of 15-20% on most subscriptions!";
+
+            // We must go back to the Main (UI) Thread to change what the user sees on screen
+            runOnUiThread(() -> tvMoneyTip.setText(finalTip));
+
+        }).start();
     }
 
     private void setupBottomNav() {

@@ -47,7 +47,6 @@ public class TimelineActivity extends AppCompatActivity {
         // Setup ViewModel to observe data
         SubscriptionViewModel viewModel = new ViewModelProvider(this).get(SubscriptionViewModel.class);
         viewModel.getAllSubscriptions().observe(this, subs -> {
-
             // Check if list is empty to show empty state
             if (subs == null || subs.isEmpty()) {
                 rv.setVisibility(View.GONE);
@@ -123,9 +122,9 @@ public class TimelineActivity extends AppCompatActivity {
                 holder.tvServiceName.setText(sub.getServiceName());
             }
 
-            // Format price with dollar sign
+            // Format price with Rupee sign
             if (holder.tvPrice != null) {
-                holder.tvPrice.setText(String.format(Locale.getDefault(), "$ %.2f", sub.getPrice()));
+                holder.tvPrice.setText(String.format(Locale.getDefault(), "₹ %.2f", sub.getPrice()));
             }
 
             // Set the logo letter
@@ -182,15 +181,15 @@ public class TimelineActivity extends AppCompatActivity {
                 if (daysAway >= 0) {
                     if (daysAway <= 3) {
                         holder.tvDaysAway.setText("Due in " + daysAway + " days");
-                        if (holder.cvSoonBadge != null) holder.cvSoonBadge.setVisibility(View.VISIBLE);
+                        if (holder.tvSoonBadge != null) holder.tvSoonBadge.setVisibility(View.VISIBLE);
                     } else {
                         // e.g., "06 days away"
                         holder.tvDaysAway.setText(String.format(Locale.getDefault(), "%02d days away", daysAway));
-                        if (holder.cvSoonBadge != null) holder.cvSoonBadge.setVisibility(View.GONE);
+                        if (holder.tvSoonBadge != null) holder.tvSoonBadge.setVisibility(View.GONE);
                     }
                 } else {
                     holder.tvDaysAway.setText("Overdue");
-                    if (holder.cvSoonBadge != null) holder.cvSoonBadge.setVisibility(View.GONE);
+                    if (holder.tvSoonBadge != null) holder.tvSoonBadge.setVisibility(View.GONE);
                 }
             }
         }
@@ -201,7 +200,7 @@ public class TimelineActivity extends AppCompatActivity {
         }
 
         static class VH extends RecyclerView.ViewHolder {
-            TextView tvLogoCircle, tvServiceName, tvDate, tvDaysAway, tvPrice, cvSoonBadge;
+            TextView tvLogoCircle, tvServiceName, tvDate, tvDaysAway, tvPrice, tvSoonBadge;
 
             VH(View v) {
                 super(v);
@@ -210,7 +209,7 @@ public class TimelineActivity extends AppCompatActivity {
                 tvDate        = v.findViewById(R.id.tvDate);
                 tvDaysAway    = v.findViewById(R.id.tvDaysAway);
                 tvPrice       = v.findViewById(R.id.tvPrice);
-                cvSoonBadge   = v.findViewById(R.id.cvSoonBadge);
+                tvSoonBadge   = v.findViewById(R.id.cvSoonBadge);
             }
         }
     }

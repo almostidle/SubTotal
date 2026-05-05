@@ -17,14 +17,14 @@
         <activity android:name=".activities.TimelineActivity" android:exported="false"/>
         <activity android:name=".activities.SignUpActivity" android:exported="false"/>
         <activity android:name=".activities.SuccessActivity" android:exported="false"/>
-        <activity android:name=".activities.WelcomeActivity" android:exported="false"/>
         <activity android:name=".activities.SubDetailActivity" android:exported="false"/>
         <activity android:name=".activities.NotificationActivity" android:exported="false"/>
         <activity android:name=".activities.AddSubscriptionActivity" android:exported="false"/>
         <activity android:name=".activities.DeleteSubActivity" android:exported="false"/>
+        <activity android:name=".activities.SignInActivity" android:exported="false"/>
 
         <activity
-            android:name=".activities.SignInActivity"
+            android:name=".activities.WelcomeActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

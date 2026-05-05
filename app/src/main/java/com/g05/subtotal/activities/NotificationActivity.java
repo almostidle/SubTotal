@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.g05.subtotal.R;
+import com.g05.subtotal.activities.SubscriptionAdapter;
 import com.g05.subtotal.model.Subscription;
 import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
@@ -26,8 +27,8 @@ public class NotificationActivity extends AppCompatActivity {
 
     private SubscriptionViewModel subscriptionViewModel;
     private SubscriptionAdapter subscriptionAdapter;
-    private RecyclerView recyclerViewNotifications;
-    private LinearLayout layoutEmptyNotifications;
+    private RecyclerView recyclerView;
+    private LinearLayout emptyStateLayout;
     private BottomNavigationView bottomNavigationView;
 
     @Override
@@ -42,9 +43,9 @@ public class NotificationActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        recyclerViewNotifications = findViewById(R.id.recyclerViewNotifications);
-        layoutEmptyNotifications  = findViewById(R.id.layoutEmptyNotifications);
-        bottomNavigationView      = findViewById(R.id.bottomNavigationView);
+        recyclerView = findViewById(R.id.recyclerViewNotifications);
+        emptyStateLayout = findViewById(R.id.layoutEmptyNotifications);
+        bottomNavigationView = findViewById(R.id.bottomNavigationView);
     }
 
     private void setupRecyclerView() {
@@ -58,9 +59,8 @@ public class NotificationActivity extends AppCompatActivity {
             intent.putExtra(SubDetailActivity.EXTRA_NEXT_BILL_DATE, subscription.getNextBillDate());
             startActivity(intent);
         });
-        recyclerViewNotifications.setLayoutManager(new LinearLayoutManager(this));
-        recyclerViewNotifications.setAdapter(subscriptionAdapter);
-        recyclerViewNotifications.setNestedScrollingEnabled(false);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setAdapter(subscriptionAdapter);
     }
 
     private void setupViewModel() {
@@ -68,32 +68,25 @@ public class NotificationActivity extends AppCompatActivity {
         subscriptionViewModel.getAllSubscriptions().observe(this, subscriptions -> {
             List<Subscription> upcoming = filterUpcomingRenewals(subscriptions);
             subscriptionAdapter.setSubscriptions(upcoming);
-
             if (upcoming.isEmpty()) {
-                recyclerViewNotifications.setVisibility(View.GONE);
-                layoutEmptyNotifications.setVisibility(View.VISIBLE);
+                recyclerView.setVisibility(View.GONE);
+                emptyStateLayout.setVisibility(View.VISIBLE);
             } else {
-                recyclerViewNotifications.setVisibility(View.VISIBLE);
-                layoutEmptyNotifications.setVisibility(View.GONE);
+                recyclerView.setVisibility(View.VISIBLE);
+                emptyStateLayout.setVisibility(View.GONE);
             }
         });
     }
 
-    /** Returns only subscriptions renewing within the next 7 days */
     private List<Subscription> filterUpcomingRenewals(List<Subscription> all) {
         List<Subscription> upcoming = new ArrayList<>();
         if (all == null) return upcoming;
 
-        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-
-        Calendar today = Calendar.getInstance();
-        today.set(Calendar.HOUR_OF_DAY, 0);
-        today.set(Calendar.MINUTE, 0);
-        today.set(Calendar.SECOND, 0);
-        today.set(Calendar.MILLISECOND, 0);
-
-        Calendar sevenDaysLater = (Calendar) today.clone();
+        Calendar now = Calendar.getInstance();
+        Calendar sevenDaysLater = Calendar.getInstance();
         sevenDaysLater.add(Calendar.DAY_OF_YEAR, 7);
+
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
         for (Subscription s : all) {
             try {
@@ -101,12 +94,12 @@ public class NotificationActivity extends AppCompatActivity {
                 if (renewalDate != null) {
                     Calendar renewalCal = Calendar.getInstance();
                     renewalCal.setTime(renewalDate);
-                    if (!renewalCal.before(today) && !renewalCal.after(sevenDaysLater)) {
+                    if (!renewalCal.before(now) && !renewalCal.after(sevenDaysLater)) {
                         upcoming.add(s);
                     }
                 }
             } catch (Exception e) {
-                // skip unparseable dates
+                // skip
             }
         }
         return upcoming;

@@ -7,6 +7,8 @@ import android.widget.EditText;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.UserProfileChangeRequest;
 import com.g05.subtotal.R;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -41,9 +43,18 @@ public class SignUpActivity extends AppCompatActivity {
 
             mAuth.createUserWithEmailAndPassword(email, password).addOnCompleteListener(task -> {
                 if (task.isSuccessful()) {
-                    Toast.makeText(this, "Account created!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(this, SignInActivity.class));
-                    finish();
+                    FirebaseUser user = mAuth.getCurrentUser();
+                    if (user != null) {
+                        UserProfileChangeRequest profileUpdates = new UserProfileChangeRequest.Builder()
+                                .setDisplayName(name)
+                                .build();
+
+                        user.updateProfile(profileUpdates).addOnCompleteListener(profileTask -> {
+                            Toast.makeText(this, "Account created!", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(this, SignInActivity.class));
+                            finish();
+                        });
+                    }
                 } else {
                     Toast.makeText(this, "Sign up failed: " +
                                     (task.getException() != null ? task.getException().getMessage() : "Unknown error"),
