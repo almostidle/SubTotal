@@ -17,16 +17,29 @@ import com.g05.subtotal.viewmodel.SubscriptionViewModel;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 public class HomeActivity extends AppCompatActivity {
 
     private SubscriptionViewModel subscriptionViewModel;
     private SubscriptionAdapter subscriptionAdapter;
-    private RecyclerView recyclerView;
-    private LinearLayout emptyStateLayout;
+
+    // Views - Empty state (S5)
+    private LinearLayout layoutEmptyState;
+    private FloatingActionButton fabAddEmpty;
+
+    // Views - Full state (S6)
+    private LinearLayout layoutFullState;
+    private RecyclerView recyclerViewSubscriptions;
     private TextView tvTotalMonthly;
     private FloatingActionButton fabAdd;
+
+    // Shared
+    private TextView tvGreeting;
+    private TextView tvDate;
     private BottomNavigationView bottomNavigationView;
 
     @Override
@@ -35,23 +48,36 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         initViews();
+        setDateAndGreeting();
         setupRecyclerView();
         setupViewModel();
         setupBottomNav();
-        setupFab();
+        setupFabs();
     }
 
     private void initViews() {
-        recyclerView = findViewById(R.id.recyclerViewSubscriptions);
-        emptyStateLayout = findViewById(R.id.layoutEmptyState);
+        tvGreeting = findViewById(R.id.tvGreeting);
+        tvDate = findViewById(R.id.tvDate);
+
+        layoutEmptyState = findViewById(R.id.layoutEmptyState);
+        fabAddEmpty = findViewById(R.id.fabAddEmpty);
+
+        layoutFullState = findViewById(R.id.layoutFullState);
+        recyclerViewSubscriptions = findViewById(R.id.recyclerViewSubscriptions);
         tvTotalMonthly = findViewById(R.id.tvTotalMonthly);
         fabAdd = findViewById(R.id.fabAdd);
+
         bottomNavigationView = findViewById(R.id.bottomNavigationView);
+    }
+
+    private void setDateAndGreeting() {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, MMM dd", Locale.getDefault());
+        tvDate.setText(sdf.format(new Date()));
     }
 
     private void setupRecyclerView() {
         subscriptionAdapter = new SubscriptionAdapter(subscription -> {
-            // FIXED: Use the correct keys defined in SubDetailActivity and pass all required data
+            // Use the correct keys defined in SubDetailActivity
             Intent intent = new Intent(HomeActivity.this, SubDetailActivity.class);
             intent.putExtra(SubDetailActivity.EXTRA_ID,             subscription.getId());
             intent.putExtra(SubDetailActivity.EXTRA_SERVICE_NAME,   subscription.getServiceName());
@@ -61,8 +87,9 @@ public class HomeActivity extends AppCompatActivity {
             intent.putExtra(SubDetailActivity.EXTRA_NEXT_BILL_DATE, subscription.getNextBillDate());
             startActivity(intent);
         });
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
-        recyclerView.setAdapter(subscriptionAdapter);
+        recyclerViewSubscriptions.setLayoutManager(new LinearLayoutManager(this));
+        recyclerViewSubscriptions.setAdapter(subscriptionAdapter);
+        recyclerViewSubscriptions.setNestedScrollingEnabled(false);
     }
 
     private void setupViewModel() {
@@ -70,23 +97,28 @@ public class HomeActivity extends AppCompatActivity {
 
         subscriptionViewModel.getAllSubscriptions().observe(this, subscriptions -> {
             subscriptionAdapter.setSubscriptions(subscriptions);
-            updateEmptyState(subscriptions);
-            updateTotalCost(subscriptions);
+
+            if (subscriptions == null || subscriptions.isEmpty()) {
+                showEmptyState();
+            } else {
+                showFullState(subscriptions);
+            }
         });
     }
 
-    private void updateEmptyState(List<Subscription> subscriptions) {
-        if (subscriptions == null || subscriptions.isEmpty()) {
-            recyclerView.setVisibility(View.GONE);
-            emptyStateLayout.setVisibility(View.VISIBLE);
-        } else {
-            recyclerView.setVisibility(View.VISIBLE);
-            emptyStateLayout.setVisibility(View.GONE);
-        }
+    /** S5 - Home Empty */
+    private void showEmptyState() {
+        layoutEmptyState.setVisibility(View.VISIBLE);
+        layoutFullState.setVisibility(View.GONE);
+        fabAdd.setVisibility(View.GONE);
     }
 
-    private void updateTotalCost(List<Subscription> subscriptions) {
-        if (subscriptions == null) return;
+    /** S6 - Home Full */
+    private void showFullState(List<Subscription> subscriptions) {
+        layoutEmptyState.setVisibility(View.GONE);
+        layoutFullState.setVisibility(View.VISIBLE);
+        fabAdd.setVisibility(View.VISIBLE);
+
         double total = 0;
         for (Subscription s : subscriptions) {
             double cost = s.getPrice();
@@ -100,7 +132,14 @@ public class HomeActivity extends AppCompatActivity {
             }
             total += cost;
         }
-        tvTotalMonthly.setText(String.format("₹%.2f / month", total));
+        tvTotalMonthly.setText(String.format(Locale.getDefault(), "$ %.0f/month", total));
+    }
+
+    private void setupFabs() {
+        View.OnClickListener addClick = v ->
+                startActivity(new Intent(HomeActivity.this, AddSubscriptionActivity.class));
+        fabAdd.setOnClickListener(addClick);
+        fabAddEmpty.setOnClickListener(addClick);
     }
 
     private void setupBottomNav() {
@@ -126,12 +165,6 @@ public class HomeActivity extends AppCompatActivity {
                 return true;
             }
             return false;
-        });
-    }
-
-    private void setupFab() {
-        fabAdd.setOnClickListener(v -> {
-            startActivity(new Intent(this, AddSubscriptionActivity.class));
         });
     }
 }
